@@ -13,6 +13,8 @@ typedef struct	s_model
 	unsigned int	size_indices;
 	unsigned int	size_vertices;
 	unsigned int	num_indices;
+	unsigned int	num_vertices;
+
 	// t_vec3			center_axis;
 	// t_vec3			inertia;
 	// t_texture		texture;

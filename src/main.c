@@ -6,7 +6,7 @@
 /*   By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/28 20:50:09 by olesgedz          #+#    #+#             */
-/*   Updated: 2020/03/06 20:47:47 by jblack-b         ###   ########.fr       */
+/*   Updated: 2020/03/06 21:30:11 by jblack-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void processInput(GLFWwindow *window);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-int main()
+int main(int argc , char ** argv)
 {
 	t_gl gl;
 	init_gl(SCR_HEIGHT, SCR_HEIGHT, &gl);
@@ -29,47 +29,77 @@ int main()
 	mgl_shader_create(&shader, "./shaders/test.vs", "./shaders/test.fs");
 
 	t_model model;
-	load_obj(&model, "./resources/42.obj");
-	
-
-	// set up vertex data (and buffer(s)) and configure vertex attributes
-	// ------------------------------------------------------------------
-	float firstTriangle[] = {
-		-0.9f, -0.5f, 0.0f,  // left 
-		-0.0f, -0.5f, 0.0f,  // right
-		-0.45f, 0.5f, 0.0f,  // top 
-	};
-	float secondTriangle[] = {
-		0.0f, -0.5f, 0.0f,  // left
-		0.9f, -0.5f, 0.0f,  // right
-		0.45f, 0.5f, 0.0f   // top 
-	};
-	unsigned int VBOs[2], VAOs[2];
-	glGenVertexArrays(2, VAOs); // we can also generate multiple VAOs or buffers at the same time
-	glGenBuffers(2, VBOs);
-	// first triangle setup
-	// --------------------
-	glBindVertexArray(VAOs[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(firstTriangle), firstTriangle, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);	// Vertex attributes stay the same
-	glEnableVertexAttribArray(0);
-	// glBindVertexArray(0); // no need to unbind at all as we directly bind a different VAO the next few lines
-	// second triangle setup
-	// ---------------------
-	glBindVertexArray(VAOs[1]);	// note that we bind to a different VAO now
-	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);	// and a different VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(secondTriangle), secondTriangle, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0); // because the vertex data is tightly packed we can also specify 0 as the vertex attribute's stride to let OpenGL figure it out
-	glEnableVertexAttribArray(0);
-	// glBindVertexArray(0); // not really necessary as well, but beware of calls that could affect VAOs while this one is bound (like binding element buffer objects, or enabling/disabling vertex attributes)
+	load_obj(&model, argv[1]);
 
 
-	// uncomment this call to draw in wireframe polygons.
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	// GLuint VBO, VAO, EBO;
+	// glGenVertexArrays(1, &VAO); // we can also generate multiple VAOs or buffers at the same time
+	// glGenBuffers(1, &VBO);
+	// glGenBuffers(1, &EBO);
 
+	// // first triangle setup
+	// // --------------------
+	// glBindVertexArray(VAO);
+	// glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	// glBufferData(GL_ARRAY_BUFFER, model.size_vertices, model.vertices, GL_STATIC_DRAW);
+	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.size_indices, model.indices, GL_STATIC_DRAW);
+
+	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);	// Vertex attributes stay the same
+	// glEnableVertexAttribArray(0);
+
+    // glBindBuffer(GL_ARRAY_BUFFER, 0);
+ 	// glBindVertexArray(0);
+	// //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	// render loop
 	// -----------
+
+
+	 float vertices[] = {
+         0.5f,  0.5f, 0.0f,  // top right
+         0.5f, -0.5f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f,  // bottom left
+        -0.5f,  0.5f, 0.0f   // top left 
+    };
+    unsigned int indices[] = {  // note that we start from 0!
+        0, 1, 3,  // first Triangle
+        1, 2, 3   // second Triangle
+    };
+    unsigned int VBO, VAO, EBO;
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+	printf("%lu\n", sizeof(vertices)/12);
+	printf("%u\n", model.size_vertices/model.num_vertices);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, model.size_vertices, model.vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.size_indices, model.indices, GL_STATIC_DRAW);
+
+   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
+		(GLvoid*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
+		(GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+
+
+
+
+    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+
+    // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+    glBindVertexArray(0); 
+
+	printf("v->%lu, e->%u\n", model.size_vertices/sizeof(float), model.num_indices);
+
 	while (!glfwWindowShouldClose(gl.window))
 	{
 		// input
@@ -83,12 +113,14 @@ int main()
 
 		shader.use(&shader);
 		// draw first triangle using the data from the first VAO
-		glBindVertexArray(VAOs[0]);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		// then we draw the second triangle using the data from the second VAO
-		glBindVertexArray(VAOs[1]);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
- 
+		glBindVertexArray(VAO);
+		// printf("size-->%lu\n", sizeof(model.vertices));
+		// glDrawArrays(GL_TRIANGLES, 0, model.num_vertices / 3);
+		printf("e->%u v->%u\n", model.num_indices, model.size_vertices);
+
+		glDrawElements(GL_TRIANGLES, model.num_indices, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+		//  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(gl.window);
@@ -97,8 +129,8 @@ int main()
 
 	// optional: de-allocate all resources once they've outlived their purpose:
 	// ------------------------------------------------------------------------
-	glDeleteVertexArrays(2, VAOs);
-	glDeleteBuffers(2, VBOs);
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------

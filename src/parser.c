@@ -6,7 +6,7 @@
 /*   By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/06 20:30:55 by jblack-b          #+#    #+#             */
-/*   Updated: 2020/03/06 20:49:18 by jblack-b         ###   ########.fr       */
+/*   Updated: 2020/03/06 21:12:34 by jblack-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,7 @@ void	load_obj(t_model *model, char *filename)
 	model->size_vertices = v * sizeof(GLfloat);
 	model->size_indices = f * sizeof(GLuint);
 	model->num_indices = f;
+    model->num_vertices = v;
 	// e->model.center_axis = compute_center_axis(e->model.vertices, v);
 	// center_vertices(e, v);
 }
