@@ -3,28 +3,32 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: olesgedz <olesgedz@student.42.fr>          +#+  +:+       +#+         #
+#    By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/28 20:37:14 by olesgedz          #+#    #+#              #
-#    Updated: 2019/12/28 20:51:23 by olesgedz         ###   ########.fr        #
+#    Updated: 2020/03/06 17:10:36 by jblack-b         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = C
+NAME = Scop
 FLAGS = -g # -Wall -Wextra -Werror
 CC = clang
 
-INCLUDES = -I include/
+INCLUDES = -I include/ -I./libs/glfw/include/ -I./libs/glad/include/ -I./include/ \
+ -I./libs/stb_image/ -I./libs/glm/ # -I./libs/imgui/ -I./libs/imgui/examples/
 
 HEADERS_DIRECTORY = 
 HEADERS_LIST = 
 HEADERS = 
 
 DIRECTORY =  $(shell pwd)
-# GLAD_DIRECTORY := $(DIRECTORY)/libs/glad/
-# GLAD := $(GLAD_DIRECTORY)libglad.a
-# GLFW_DIRECTORY := $(DIRECTORY)/libs/glfw/
-# GLFW := $(GLFW_DIRECTORY)src/libglfw3.a
+GLAD_DIRECTORY := $(DIRECTORY)/libs/glad/
+GLAD := $(GLAD_DIRECTORY)libglad.a
+GLFW_DIRECTORY := $(DIRECTORY)/libs/glfw/
+GLFW := $(GLFW_DIRECTORY)src/libglfw3.a
+IMGUI_DIRECTORY := $(DIRECTORY)/libs/imgui
+LIBFT_DIRECTORY := $(DIRECTORY)/libs/libft/
+LIBFT:= $(LIBFT_DIRECTORY)/libft.a
 
 SRCS_DIRECTORY = ./src/
 SRCS_LIST = main.c
@@ -61,35 +65,39 @@ else
 endif
 
 ifeq ($(detected_OS),Linux)
-	# LIBRARIES += -L./libs/glad/ -lglad -ldl  -lGL -L./libs/glfw/src/ -lglfw3 \
-	# -lXrandr -lXrender -lXi -lXfixes -lXxf86vm -lXext -lX11 -lpthread -lxcb -lXau -lXdmcp
+	LIBRARIES += -L./libs/libft/ -lft  -L./libs/glad/ -lglad -ldl  -lGL -L./libs/glfw/src/ -lglfw3
+	LIBRARIES += -lXrandr -lXrender -lXi -lXfixes -lXxf86vm -lXext -lX11 -lpthread -lxcb -lXau -lXdmcp
 endif
 ifeq ($(detected_OS),Darwin)  
-	# LIBRARIES = -L./libs/glad/ -lglad -L./libs/glfw/src/ -lglfw3      # Mac OS X
-	# LIBRARIES += -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+	LIBRARIES = -L./libs/libft/ -lft  -L./libs/glad/ -lglad -L./libs/glfw/src/ -lglfw3      # Mac OS X
+	LIBRARIES += -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 endif
 
 
 .PHONY: clean fclean re
 
-all: $(NAME) #$(MAKES) 
+all:  $(MAKES) $(NAME) 
 
 
-$(NAME): $(OBJS) $(HEADERS)
+$(NAME): $(OBJS) $(HEADERS) $(GLFW)
 	@$(CC) $(FLAGS)  $(INCLUDES) $(OBJS)  -o $(NAME) $(LIBRARIES)
 	@echo "$(CLEAR_LINE)[`expr $(CURRENT_FILES) '*' 100 / $(TOTAL_FILES) `%] $(COL_BLUE)[$(NAME)] $(COL_GREEN)Finished compilation. Output file : $(COL_VIOLET)$(PWD)/$(NAME)$(COL_END)"
 
 $(MAKES):
-	@echo "makes"
+	@$(MAKE) -sC $(GLAD_DIRECTORY)
+	@$(MAKE) -sC $(LIBFT_DIRECTORY)
+
 
 $(OBJS_DIRECTORY):
 	@mkdir -p $(OBJS_DIRECTORY)
-
 
 $(OBJS_DIRECTORY)%.o : $(SRCS_DIRECTORY)%.c $(HEADERS)
 	@mkdir -p $(@D)
 	@$(CC) $(FLAGS) -c $(INCLUDES) $< -o $@
 	@echo "$(CLEAR_LINE)[`expr $(CURRENT_FILES) '*' 100 / $(TOTAL_FILES) `%] $(COL_BLUE)[$(NAME)] $(COL_GREEN)Compiling file [$(COL_VIOLET)$<$(COL_GREEN)].($(CURRENT_FILES) / $(TOTAL_FILES))$(COL_END)$(BEGIN_LINE)"
+
+$(GLFW):
+	@cd libs/glfw/ && cmake . && make glfw; 
 
 sub:
 	git submodule update --init --recursive;
