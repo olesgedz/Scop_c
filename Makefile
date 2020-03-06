@@ -6,7 +6,7 @@
 #    By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/28 20:37:14 by olesgedz          #+#    #+#              #
-#    Updated: 2020/03/06 17:10:36 by jblack-b         ###   ########.fr        #
+#    Updated: 2020/03/06 20:42:58 by jblack-b         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ FLAGS = -g # -Wall -Wextra -Werror
 CC = clang
 
 INCLUDES = -I include/ -I./libs/glfw/include/ -I./libs/glad/include/ -I./include/ \
- -I./libs/stb_image/ -I./libs/glm/ # -I./libs/imgui/ -I./libs/imgui/examples/
+ -I./libs/stb_image/ -I./libs/libft/includes/ # -I./libs/imgui/ -I./libs/imgui/examples/
 
 HEADERS_DIRECTORY = 
 HEADERS_LIST = 
@@ -31,7 +31,10 @@ LIBFT_DIRECTORY := $(DIRECTORY)/libs/libft/
 LIBFT:= $(LIBFT_DIRECTORY)/libft.a
 
 SRCS_DIRECTORY = ./src/
-SRCS_LIST = main.c
+SRCS_LIST = main.c \
+			initgl.c\
+			shader.c\
+			parser.c
 
 OBJS_DIRECTORY = objects/
 OBJS_LIST = $(patsubst %.c, %.o, $(SRCS_LIST))
