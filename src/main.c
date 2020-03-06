@@ -6,7 +6,7 @@
 /*   By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/28 20:50:09 by olesgedz          #+#    #+#             */
-/*   Updated: 2020/03/06 21:30:11 by jblack-b         ###   ########.fr       */
+/*   Updated: 2020/03/06 22:16:08 by jblack-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,6 @@ int main(int argc , char ** argv)
     glGenBuffers(1, &EBO);
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
-	printf("%lu\n", sizeof(vertices)/12);
-	printf("%u\n", model.size_vertices/model.num_vertices);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, model.size_vertices, model.vertices, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
