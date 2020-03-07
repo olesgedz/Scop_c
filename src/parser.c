@@ -6,7 +6,7 @@
 /*   By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/06 20:30:55 by jblack-b          #+#    #+#             */
-/*   Updated: 2020/03/06 21:12:34 by jblack-b         ###   ########.fr       */
+/*   Updated: 2020/03/07 17:23:43 by jblack-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,14 +48,15 @@ GLfloat	*append_vertices(GLfloat *array, char *line, int *length)
 	GLfloat	*new;
 	// printf("%s\n", line);
 	tab = ft_strsplit(&line[1], ' ');
-	*length += 6;
+	*length += 3;
 	new = (GLfloat*)malloc(sizeof(GLfloat) * *length);
 	i = -1;
-	while (++i < *length - 6)
+	while (++i < *length - 3)
 		new[i] = array[i];
 	free(array);
 	array = new;
 	j = -1;
+	printf("%s\n", line);
 	// int l = 0;
 	// while(tab[l])
 	// {
@@ -64,8 +65,8 @@ GLfloat	*append_vertices(GLfloat *array, char *line, int *length)
 	// }
 	while (tab[++j] != NULL)
 	{
-		array[*length - 6 + j] = (GLfloat)ft_atof(tab[j]);
-		array[*length - 3 + j] = j * 0.66f;
+		array[*length - 3 + j] = (GLfloat)ft_atof(tab[j]);
+		// printf("%f %f\n", array[*length - 6 + j], array[*length - 3 + j]);
 		ft_strdel(&tab[j]);
 	}
 	ft_strdel(&tab[j]);
