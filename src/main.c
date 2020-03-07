@@ -6,7 +6,7 @@
 /*   By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/28 20:50:09 by olesgedz          #+#    #+#             */
-/*   Updated: 2020/03/07 17:24:20 by jblack-b         ###   ########.fr       */
+/*   Updated: 2020/03/07 18:10:08 by jblack-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int main(int argc , char ** argv)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.size_indices, model.indices, GL_STATIC_DRAW);
 
-   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat),
+   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0,
 		(GLvoid*)0);
 	glEnableVertexAttribArray(0);
 	// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
@@ -96,9 +96,12 @@ int main(int argc , char ** argv)
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0); 
 
-	printf("v->%lu, e->%u\n", model.size_vertices/sizeof(float), model.num_indices);
+	// printf("v->%lu, e->%u\n", model.size_vertices/sizeof(float), model.num_indices);
 		printf("e->%u v->%u\n", model.num_indices, model.size_vertices);
-
+	for(int i =0; i <model.num_indices; i++)
+	{
+		printf("%u\n", model.indices[i]);
+	}
 	while (!glfwWindowShouldClose(gl.window))
 	{
 		// input
