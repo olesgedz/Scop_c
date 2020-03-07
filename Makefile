@@ -69,7 +69,7 @@ endif
 
 ifeq ($(detected_OS),Linux)
 	LIBRARIES += -L./libs/libft/ -lft  -L./libs/glad/ -lglad -ldl  -lGL -L./libs/glfw/src/ -lglfw3
-	LIBRARIES += -lXrandr -lXrender -lXi -lXfixes -lXxf86vm -lXext -lX11 -lpthread -lxcb -lXau -lXdmcp
+	LIBRARIES += -lXrandr -lXrender -lXi -lXfixes -lXxf86vm -lXext -lX11 -lpthread -lxcb -lXau -lXdmcp -lm -ldl
 endif
 ifeq ($(detected_OS),Darwin)  
 	LIBRARIES = -L./libs/libft/ -lft  -L./libs/glad/ -lglad -L./libs/glfw/src/ -lglfw3      # Mac OS X

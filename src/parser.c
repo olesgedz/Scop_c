@@ -46,7 +46,7 @@ GLfloat	*append_vertices(GLfloat *array, char *line, int *length)
 	int		j;
 	char	**tab;
 	GLfloat	*new;
-
+	// printf("%s\n", line);
 	tab = ft_strsplit(&line[1], ' ');
 	*length += 6;
 	new = (GLfloat*)malloc(sizeof(GLfloat) * *length);
@@ -56,6 +56,12 @@ GLfloat	*append_vertices(GLfloat *array, char *line, int *length)
 	free(array);
 	array = new;
 	j = -1;
+	// int l = 0;
+	// while(tab[l])
+	// {
+	// 	printf("%s\n", tab[l]);
+	// 	l+=1;
+	// }
 	while (tab[++j] != NULL)
 	{
 		array[*length - 6 + j] = (GLfloat)ft_atof(tab[j]);
@@ -107,14 +113,19 @@ void	load_obj(t_model *model, char *filename)
 	model->indices = (GLuint*)ft_memalloc(sizeof(GLuint) * 3);
 	if ((fd = open(filename, O_RDWR)) == -1)
 		ft_terminate("obj file opening failed.");
+	// int i = 0;
 	while (get_next_line(fd, &line) > 0)
 	{
 		if (line[0] == 'v' && line[1] == ' ')
+		{
 			model->vertices = append_vertices(model->vertices, line, &v);
+			// i++;
+		}
 		else if (line[0] == 'f' && line[1] == ' ')
 			model->indices = append_indices(model->indices, line, &f);
 		ft_strdel(&line);
 	}
+	// printf("vVVVVV->%d\n", i);
 	ft_strdel(&line);
 	model->size_vertices = v * sizeof(GLfloat);
 	model->size_indices = f * sizeof(GLuint);
