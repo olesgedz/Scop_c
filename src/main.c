@@ -6,7 +6,7 @@
 /*   By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/28 20:50:09 by olesgedz          #+#    #+#             */
-/*   Updated: 2020/03/07 18:10:08 by jblack-b         ###   ########.fr       */
+/*   Updated: 2020/03/10 21:15:48 by jblack-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,11 @@ void processInput(GLFWwindow *window);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+
+t_mouse mouse;
+
+
+
 int main(int argc , char ** argv)
 {
 	t_gl gl;
@@ -31,40 +36,9 @@ int main(int argc , char ** argv)
 	t_model model;
 	load_obj(&model, argv[1]);
 
-
-	// GLuint VBO, VAO, EBO;
-	// glGenVertexArrays(1, &VAO); // we can also generate multiple VAOs or buffers at the same time
-	// glGenBuffers(1, &VBO);
-	// glGenBuffers(1, &EBO);
-
-	// // first triangle setup
-	// // --------------------
-	// glBindVertexArray(VAO);
-	// glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	// glBufferData(GL_ARRAY_BUFFER, model.size_vertices, model.vertices, GL_STATIC_DRAW);
-	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.size_indices, model.indices, GL_STATIC_DRAW);
-
-	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);	// Vertex attributes stay the same
-	// glEnableVertexAttribArray(0);
-
-    // glBindBuffer(GL_ARRAY_BUFFER, 0);
- 	// glBindVertexArray(0);
-	// //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	// render loop
-	// -----------
+	glfwSetCursorPosCallback(gl.window, mouse_callback);
 
 
-	 float vertices[] = {
-         0.5f,  0.5f, 0.0f,  // top right
-         0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left 
-    };
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
-    };
     unsigned int VBO, VAO, EBO;
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
@@ -78,30 +52,10 @@ int main(int argc , char ** argv)
    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0,
 		(GLvoid*)0);
 	glEnableVertexAttribArray(0);
-	// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
-	// 	(GLvoid*)(3 * sizeof(GLfloat)));
-	// glEnableVertexAttribArray(1);
-
-
-
-
-
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
-    // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0); 
 
-	// printf("v->%lu, e->%u\n", model.size_vertices/sizeof(float), model.num_indices);
-		printf("e->%u v->%u\n", model.num_indices, model.size_vertices);
-	for(int i =0; i <model.num_indices; i++)
-	{
-		printf("%u\n", model.indices[i]);
-	}
 	while (!glfwWindowShouldClose(gl.window))
 	{
 		// input
@@ -114,16 +68,11 @@ int main(int argc , char ** argv)
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		shader.use(&shader);
-		// draw first triangle using the data from the first VAO
 		glBindVertexArray(VAO);
-		// printf("size-->%lu\n", sizeof(model.vertices));
+		shader.set_int(&shader, "color", 0);
 		// glDrawArrays(GL_TRIANGLES, 0, model.num_vertices / 3);
-
 		glDrawElements(GL_TRIANGLES, model.num_indices, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
-		//  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(gl.window);
 		glfwPollEvents();
 	}
@@ -147,3 +96,27 @@ void processInput(GLFWwindow *window)
 		glfwSetWindowShouldClose(window, 1);
 }
 
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+
+		if (mouse.firstMouse)
+		{
+			mouse.lastX = xpos;
+			mouse.lastY = ypos;
+			mouse.firstMouse = 0;
+		}
+
+		float xoffset = xpos - mouse.lastX;
+		float yoffset = mouse.lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+		mouse.lastX = xpos;
+		mouse.lastY = ypos;
+		// if (!cursor)
+		// {
+		// 	camera.ProcessMouseMovement(xoffset, yoffset);
+		// }
+}
+// void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+// {
+// 	camera.ProcessMouseScroll(yoffset);
+// }

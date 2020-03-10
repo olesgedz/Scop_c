@@ -6,7 +6,7 @@
 /*   By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/06 17:53:18 by jblack-b          #+#    #+#             */
-/*   Updated: 2020/03/06 20:28:27 by jblack-b         ###   ########.fr       */
+/*   Updated: 2020/03/10 21:13:08 by jblack-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,10 @@ int mgl_shader_create(t_shader *shader, char *v_srcfile, char *f_srcfile)
 	glDeleteShader(shader->vertex_shader);
 	glDeleteShader(shader->fragment_shader);
 	shader->use = shader_use;
+	shader->set_int = mgl_shader_setInt;
 	return 0;
 }
-
+void mgl_shader_setInt(t_shader * shader, char * name, int value)
+{
+	glUniform1i(glGetUniformLocation(shader->shader_program, name), value);
+}

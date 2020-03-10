@@ -6,7 +6,7 @@
 /*   By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/06 20:30:55 by jblack-b          #+#    #+#             */
-/*   Updated: 2020/03/07 17:25:38 by jblack-b         ###   ########.fr       */
+/*   Updated: 2020/03/10 20:56:47 by jblack-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ GLfloat	*append_vertices(GLfloat *array, char *line, int *length)
 	free(array);
 	array = new;
 	j = -1;
-	printf("%s\n", line);
 	// int l = 0;
 	// while(tab[l])
 	// {
