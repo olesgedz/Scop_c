@@ -13,8 +13,8 @@
 #include <stdio.h>
 #include "scop.h"
 #include "mesh.h"
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+#include "libmath.h"
+void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 
 // settings
@@ -23,10 +23,10 @@ const unsigned int SCR_HEIGHT = 600;
 
 t_mouse mouse;
 
-
-
-int main(int argc , char ** argv)
+int main(int argc, char **argv)
 {
+	t_mat4 m = ft_mat4_identity_matrix();
+	ft_mat4_print(m);
 	t_gl gl;
 	init_gl(SCR_HEIGHT, SCR_HEIGHT, &gl);
 
@@ -38,23 +38,22 @@ int main(int argc , char ** argv)
 
 	glfwSetCursorPosCallback(gl.window, mouse_callback);
 
-
-    unsigned int VBO, VAO, EBO;
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	unsigned int VBO, VAO, EBO;
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, model.size_vertices, model.vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.size_indices, model.indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.size_indices, model.indices, GL_STATIC_DRAW);
 
-   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0,
-		(GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0,
+						  (GLvoid *)0);
 	glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glBindVertexArray(0); 
+	glBindVertexArray(0);
 
 	while (!glfwWindowShouldClose(gl.window))
 	{
@@ -70,6 +69,7 @@ int main(int argc , char ** argv)
 		shader.use(&shader);
 		glBindVertexArray(VAO);
 		shader.set_int(&shader, "color", 0);
+		shader.set_mat4(&shader, "model", &m);
 		// glDrawArrays(GL_TRIANGLES, 0, model.num_vertices / 3);
 		glDrawElements(GL_TRIANGLES, model.num_indices, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
@@ -96,25 +96,25 @@ void processInput(GLFWwindow *window)
 		glfwSetWindowShouldClose(window, 1);
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 {
 
-		if (mouse.firstMouse)
-		{
-			mouse.lastX = xpos;
-			mouse.lastY = ypos;
-			mouse.firstMouse = 0;
-		}
-
-		float xoffset = xpos - mouse.lastX;
-		float yoffset = mouse.lastY - ypos; // reversed since y-coordinates go from bottom to top
-
+	if (mouse.firstMouse)
+	{
 		mouse.lastX = xpos;
 		mouse.lastY = ypos;
-		// if (!cursor)
-		// {
-		// 	camera.ProcessMouseMovement(xoffset, yoffset);
-		// }
+		mouse.firstMouse = 0;
+	}
+
+	float xoffset = xpos - mouse.lastX;
+	float yoffset = mouse.lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+	mouse.lastX = xpos;
+	mouse.lastY = ypos;
+	// if (!cursor)
+	// {
+	// 	camera.ProcessMouseMovement(xoffset, yoffset);
+	// }
 }
 // void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 // {

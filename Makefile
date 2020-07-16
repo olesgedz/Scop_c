@@ -15,7 +15,7 @@ FLAGS = -g # -Wall -Wextra -Werror
 CC = clang
 
 INCLUDES = -I include/ -I./libs/glfw/include/ -I./libs/glad/include/ -I./include/ \
- -I./libs/stb_image/ -I./libs/libft/includes/ # -I./libs/imgui/ -I./libs/imgui/examples/
+ -I./libs/stb_image/ -I./libs/libft/includes/ -I./libs/libmath/includes/ # -I./libs/imgui/ -I./libs/imgui/examples/
 
 HEADERS_DIRECTORY = 
 HEADERS_LIST = 
@@ -29,7 +29,8 @@ GLFW := $(GLFW_DIRECTORY)src/libglfw3.a
 IMGUI_DIRECTORY := $(DIRECTORY)/libs/imgui
 LIBFT_DIRECTORY := $(DIRECTORY)/libs/libft/
 LIBFT:= $(LIBFT_DIRECTORY)/libft.a
-
+LIBMATH_DIRECTORY := $(DIRECTORY)/libs/libmath/
+LIBMATH := $(LIBMATH_DIRECTORY)libmath.a
 SRCS_DIRECTORY = ./src/
 SRCS_LIST = main.c \
 			initgl.c\
@@ -68,11 +69,11 @@ else
 endif
 
 ifeq ($(detected_OS),Linux)
-	LIBRARIES += -L./libs/libft/ -lft  -L./libs/glad/ -lglad -ldl  -lGL -L./libs/glfw/src/ -lglfw3
+	LIBRARIES += -L./libs/libft/ -lft  -L./libs/glad/ -lglad -ldl  -lGL -L./libs/glfw/src/ -lglfw3 -L./libs/libmath/ -lmath
 	LIBRARIES += -lXrandr -lXrender -lXi -lXfixes -lXxf86vm -lXext -lX11 -lpthread -lxcb -lXau -lXdmcp -lm -ldl
 endif
 ifeq ($(detected_OS),Darwin)  
-	LIBRARIES = -L./libs/libft/ -lft  -L./libs/glad/ -lglad -L./libs/glfw/src/ -lglfw3      # Mac OS X
+	LIBRARIES = -L./libs/libft/ -lft  -L./libs/glad/ -lglad -L./libs/glfw/src/ -lglfw3  -L./libs/libmath/ -lmath   # Mac OS X
 	LIBRARIES += -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 endif
 
@@ -89,6 +90,7 @@ $(NAME): $(OBJS) $(HEADERS) $(GLFW)
 $(MAKES):
 	@$(MAKE) -sC $(GLAD_DIRECTORY)
 	@$(MAKE) -sC $(LIBFT_DIRECTORY)
+	@$(MAKE) -sC $(LIBMATH_DIRECTORY)
 
 
 $(OBJS_DIRECTORY):

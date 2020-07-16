@@ -14,21 +14,23 @@
 #define SHADER_H
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
+#include "libmath.h"
 // http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
 typedef struct s_shader t_shader;
 struct s_shader
 {
-	int vertex_shader;
-	int fragment_shader;
-	int shader_program;
-	char *vertex_shader_src;
-	char *fragment_shader_src;
-	size_t src_size;
-	int (*use)(t_shader *shader);
-	void (*set_int)(t_shader *shader, char * name, int value);
-
+    int vertex_shader;
+    int fragment_shader;
+    int shader_program;
+    char *vertex_shader_src;
+    char *fragment_shader_src;
+    size_t src_size;
+    int (*use)(t_shader *shader);
+    void (*set_int)(t_shader *shader, char *name, int value);
+    void (*set_mat4)(t_shader *shader, char *name, t_mat4 *mat);
 };
 int mgl_shader_create(t_shader *shader, char *v_srcfile, char *f_srcfile);
-void mgl_shader_setInt(t_shader * shader, char * name, int value);
+void mgl_shader_setInt(t_shader *shader, char *name, int value);
+void mgl_shader_setMat4(t_shader *shader, char *name, t_mat4 *mat);
 
 #endif

@@ -13,24 +13,24 @@
 #include "ugl.h"
 #include "shader.h"
 #include "libft.h"
- #include <fcntl.h>
- #include <stdio.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include "libmath.h"
+
 char *vertexShaderSource = "#version 330 core\n"
-	"layout (location = 0) in vec3 aPos;\n"
-	"void main()\n"
-	"{\n"
-	"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-	"}\0";
+						   "layout (location = 0) in vec3 aPos;\n"
+						   "void main()\n"
+						   "{\n"
+						   "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+						   "}\0";
 char *fragmentShaderSource = "#version 330 core\n"
-	"out vec4 FragColor;\n"
-	"void main()\n"
-	"{\n"
-	"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-	"}\n\0";
+							 "out vec4 FragColor;\n"
+							 "void main()\n"
+							 "{\n"
+							 "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+							 "}\n\0";
 
-
-
-int shader_use(t_shader * shader)
+int shader_use(t_shader *shader)
 {
 	glUseProgram(shader->shader_program);
 	return 0;
@@ -50,9 +50,9 @@ int mgl_shader_create(t_shader *shader, char *v_srcfile, char *f_srcfile)
 		glGetShaderInfoLog(shader->vertex_shader, 512, NULL, infoLog);
 		printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n %s\n ", infoLog);
 	}
-		// fragment shader
+	// fragment shader
 	shader->fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-	shader->fragment_shader_src =  readfile(f_srcfile);
+	shader->fragment_shader_src = readfile(f_srcfile);
 	glShaderSource(shader->fragment_shader, 1, (const char *const *)&shader->fragment_shader_src, NULL);
 	glCompileShader(shader->fragment_shader);
 	// check for shader compile errors
@@ -69,17 +69,23 @@ int mgl_shader_create(t_shader *shader, char *v_srcfile, char *f_srcfile)
 	glLinkProgram(shader->shader_program);
 	// check for linking errors
 	glGetProgramiv(shader->shader_program, GL_LINK_STATUS, &success);
-	if (!success) {
+	if (!success)
+	{
 		glGetProgramInfoLog(shader->shader_program, 512, NULL, infoLog);
-		printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n %s\n",  infoLog);
+		printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n %s\n", infoLog);
 	}
 	glDeleteShader(shader->vertex_shader);
 	glDeleteShader(shader->fragment_shader);
 	shader->use = shader_use;
 	shader->set_int = mgl_shader_setInt;
+	shader->set_mat4 = mgl_shader_setMat4;
 	return 0;
 }
-void mgl_shader_setInt(t_shader * shader, char * name, int value)
+void mgl_shader_setInt(t_shader *shader, char *name, int value)
 {
 	glUniform1i(glGetUniformLocation(shader->shader_program, name), value);
+}
+void mgl_shader_setMat4(t_shader *shader, char *name, t_mat4 *mat)
+{
+	glUniformMatrix4fv(glGetUniformLocation(shader->shader_program, name), 1, GL_FALSE, mat->matrix);
 }
