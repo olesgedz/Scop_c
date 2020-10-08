@@ -24,22 +24,22 @@ const unsigned int SCR_HEIGHT = 600;
 t_mouse mouse;
 
 float wasd[4] = {0};
-t_mat4	set_projection_matrix()
+t_mat4 set_projection_matrix()
 {
-	float	s;
-	float	far;
-	float	near;
+	float s;
+	float far;
+	float near;
 	float fov = 70.f;
 	t_mat4 ret = ft_mat4_zero();
 	far = 100.f;
 	near = 0.1f;
 	s = 1 / (tan(fov * 0.5 * M_PI / 180.0));
-	ret.matrix[0] = s / ((float)SCR_WIDTH / (float)SCR_HEIGHT);
-	ret.matrix[5] = s;
-	ret.matrix[10] = -(far + near) / (far - near);
-	ret.matrix[11] = -1;
-	ret.matrix[14] = -2 * far * near / (far - near);
-	return(ret);
+	ret.matrix[0][0] = s / ((float)SCR_WIDTH / (float)SCR_HEIGHT);
+	ret.matrix[1][1] = s;
+	ret.matrix[2][2] = -(far + near) / (far - near);
+	ret.matrix[2][3] = -1;
+	ret.matrix[3][2] = -2 * far * near / (far - near);
+	return (ret);
 }
 
 int main(int argc, char **argv)
@@ -71,12 +71,11 @@ int main(int argc, char **argv)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(0);
-	t_mat4 proj = set_projection_matrix();//ft_mat4_projection(ft_deg_rad(90.f), 800 / 400, 0.1f, 10000.0f );//ft_mat4_projection(ft_deg_rad(45.f),(float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f );
-	ft_mat4_print(set_projection_matrix());
+	t_mat4 proj = set_projection_matrix(); //ft_mat4_projection(ft_deg_rad(90.f), 800 / 400, 0.1f, 10000.0f );//ft_mat4_projection(ft_deg_rad(45.f),(float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f );
+	//ft_mat4_print(set_projection_matrix());
 	printf("                            \n");
-	ft_mat4_print(ft_mat4_projection(ft_deg_rad(45.f), 800 / 400, 0.1f, 100.0f ));
+	//ft_mat4_print(ft_mat4_projection(ft_deg_rad(45.f), 800 / 400, 0.1f, 100.0f));
 
-	
 	t_mat4 view = ft_mat4_identity_matrix();
 	while (!glfwWindowShouldClose(gl.window))
 	{
@@ -89,8 +88,8 @@ int main(int argc, char **argv)
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		t_mat4 model_matrix = ft_mat4_identity_matrix();
-		//model_matrix = mat4_rotate_axis(model_matrix, 2, (float)glfwGetTime() * 30.0f);
-		view = ft_look_at((t_vec3){wasd[1],0,wasd[0]},(t_vec3){wasd[1],0,wasd[0] - 1}, (t_vec3){0,1,0});//mat4_mul(view,ft_mat4_translation_matrix((t_vec3){wasd[1],0, wasd[0]}));
+		// model_matrix = mat4_rotate_axis(model_matrix, 2, (float)glfwGetTime() * 30.0f);
+		view = ft_look_at((t_vec3){wasd[1], 0, wasd[0]}, (t_vec3){wasd[1], 0, wasd[0] - 1}, (t_vec3){0, 1, 0});
 		// ft_bzero(wasd, sizeof(wasd));
 		shader.use(&shader);
 		glBindVertexArray(VAO);
@@ -99,7 +98,7 @@ int main(int argc, char **argv)
 		shader.set_mat4(&shader, "view", &view);
 		shader.set_mat4(&shader, "projection", &proj);
 
- 		// model_matrix = mat4_mul(mat4_transpose(model_matrix),
+		// model_matrix = mat4_mul(mat4_transpose(model_matrix),
 		// mat4_mul(view, proj));
 		// shader.set_mat4(&shader, "model", &model_matrix);
 
@@ -127,19 +126,20 @@ void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, 1);
-	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		wasd[0] += 0.1;
-	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		wasd[0] -= 0.1;
-	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		wasd[1] += 0.1;
-	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		wasd[0] += 0.1;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		wasd[1] -= 0.1;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		wasd[1] += 0.1;
 }
 
 void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 {
 
+	printf("ok\n");
 	if (mouse.firstMouse)
 	{
 		mouse.lastX = xpos;

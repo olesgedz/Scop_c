@@ -87,5 +87,5 @@ void mgl_shader_setInt(t_shader *shader, char *name, int value)
 }
 void mgl_shader_setMat4(t_shader *shader, char *name, t_mat4 *mat)
 {
-	glUniformMatrix4fv(glGetUniformLocation(shader->shader_program, name), 1, GL_FALSE, mat->matrix);
+	glUniformMatrix4fv(glGetUniformLocation(shader->shader_program, name), 1, GL_FALSE, &mat->matrix[0][0]);
 }
