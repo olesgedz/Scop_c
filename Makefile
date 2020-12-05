@@ -89,9 +89,9 @@ $(NAME): $(OBJS) $(HEADERS) $(GLFW)
 	@echo "$(CLEAR_LINE)[`expr $(CURRENT_FILES) '*' 100 / $(TOTAL_FILES) `%] $(COL_BLUE)[$(NAME)] $(COL_GREEN)Finished compilation. Output file : $(COL_VIOLET)$(PWD)/$(NAME)$(COL_END)"
 
 $(MAKES):
-	@$(MAKE) -sC $(GLAD_DIRECTORY)
-	@$(MAKE) -sC $(LIBFT_DIRECTORY)
-	@$(MAKE) -sC $(LIBMATH_DIRECTORY)
+	$(MAKE) -sC $(GLAD_DIRECTORY)
+	$(MAKE) -sC $(LIBFT_DIRECTORY)
+	$(MAKE) -sC $(LIBMATH_DIRECTORY)
 
 
 $(OBJS_DIRECTORY):
@@ -119,6 +119,8 @@ clean:
 fclean: clean
 	@rm -f $(NAME)
 	@echo "$(NAME): $(RED)$(NAME) was deleted$(RESET)"
+	$(MAKE) -sC $(LIBMATH_DIRECTORY) fclean
+
 
 re:
 	@$(MAKE) fclean

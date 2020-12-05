@@ -25,6 +25,7 @@ typedef struct s_camera
 	t_vec3 up;
 	t_vec3 camera_up;
 	t_vec3 camera_right;
+	t_vec3 camera_front;
 } t_camera;
 
 t_camera *camera_init();
