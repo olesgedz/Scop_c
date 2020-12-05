@@ -35,7 +35,8 @@ SRCS_DIRECTORY = ./src/
 SRCS_LIST = main.c \
 			initgl.c\
 			shader.c\
-			parser.c
+			parser.c\
+			camera.c
 
 OBJS_DIRECTORY = objects/
 OBJS_LIST = $(patsubst %.c, %.o, $(SRCS_LIST))

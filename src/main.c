@@ -14,6 +14,7 @@
 #include "scop.h"
 #include "mesh.h"
 #include "libmath.h"
+#include "camera.h"
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 
@@ -22,8 +23,9 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 t_mouse mouse;
+t_camera *camera;
 
-float wasd[4] = {0};
+float wasd[4] = {0, 0, 0, 0};
 t_mat4 set_projection_matrix()
 {
 	float s;
@@ -34,11 +36,12 @@ t_mat4 set_projection_matrix()
 	far = 100.f;
 	near = 0.1f;
 	s = 1 / (tan(fov * 0.5 * M_PI / 180.0));
-	ret.matrix[0][0] = s / ((float)SCR_WIDTH / (float)SCR_HEIGHT);
-	ret.matrix[1][1] = s;
-	ret.matrix[2][2] = -(far + near) / (far - near);
-	ret.matrix[2][3] = -1;
-	ret.matrix[3][2] = -2 * far * near / (far - near);
+	ret = ft_mat4_identity_matrix();
+	ret.matrix[0] = s / ((float)SCR_WIDTH / (float)SCR_HEIGHT);
+	ret.matrix[5] = s;
+	ret.matrix[10] = -(far + near) / (far - near);
+	ret.matrix[14] = -2 * far * near / (far - near);
+	ret.matrix[11] = -1;
 	return (ret);
 }
 
@@ -77,6 +80,7 @@ int main(int argc, char **argv)
 	//ft_mat4_print(ft_mat4_projection(ft_deg_rad(45.f), 800 / 400, 0.1f, 100.0f));
 
 	t_mat4 view = ft_mat4_identity_matrix();
+	camera = camera_init();
 	while (!glfwWindowShouldClose(gl.window))
 	{
 		// input
@@ -89,8 +93,9 @@ int main(int argc, char **argv)
 		glClear(GL_COLOR_BUFFER_BIT);
 		t_mat4 model_matrix = ft_mat4_identity_matrix();
 		// model_matrix = mat4_rotate_axis(model_matrix, 2, (float)glfwGetTime() * 30.0f);
-		view = ft_look_at((t_vec3){wasd[1], 0, wasd[0]}, (t_vec3){wasd[1], 0, wasd[0] - 1}, (t_vec3){0, 1, 0});
+		view = ft_look_at((t_vec3){wasd[1], 0, wasd[0]}, (t_vec3){0, 0, 0}, (t_vec3){0, 1, 0});
 		// ft_bzero(wasd, sizeof(wasd));
+		ft_mat4_print(view);
 		shader.use(&shader);
 		glBindVertexArray(VAO);
 		shader.set_int(&shader, "color", 0);

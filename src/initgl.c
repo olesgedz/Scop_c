@@ -44,7 +44,7 @@ int init_gl(int w_h, int w_w, t_gl *gl)
 		printf("Failed to initialize GLAD\n");
 		return -1;
 	}
-
+	return 0;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

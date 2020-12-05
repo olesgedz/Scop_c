@@ -12,11 +12,20 @@
 
 #ifndef CAMERA_H
 #define CAMERA_H
+#include "libmath.h"
 typedef struct s_camera
 {
-    int firstMouse;
-    int lastX;
-    int lastY;
-    int cursor;
+	int firstMouse;
+	int lastX;
+	int lastY;
+	int cursor;
+	t_vec3 position;
+	t_vec3 target;
+	t_vec3 direction;
+	t_vec3 up;
+	t_vec3 camera_up;
+	t_vec3 camera_right;
 } t_camera;
+
+t_camera *camera_init();
 #endif
