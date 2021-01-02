@@ -17,7 +17,7 @@ typedef struct	s_model
 
 	// t_vec3			center_axis;
 	// t_vec3			inertia;
-	// t_texture		texture;
+	unsigned int 		texture;
 	float			velocity;
 	char			*filename;
 }				t_model;

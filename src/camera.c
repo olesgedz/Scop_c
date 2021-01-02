@@ -1,6 +1,7 @@
 #include "camera.h"
 #include "libft.h"
 #include "libmath.h"
+#include "scop.h"
 
 t_camera *camera_init()
 {
@@ -19,6 +20,8 @@ t_camera *camera_init()
 		camera->yaw = -90;
 		camera->m_sesivity = 0.1f;
 		camera->mouse = ft_memalloc(sizeof(t_mouse));
+		camera->mouse->lastX = SCR_WIDTH / 2.0f;
+		camera->mouse->lastY = SCR_HEIGHT / 2.0f;
 	}
 	return camera;
 }

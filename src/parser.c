@@ -46,31 +46,23 @@ GLfloat	*append_vertices(GLfloat *array, char *line, int *length)
 	int		j;
 	char	**tab;
 	GLfloat	*new;
-	// printf("%s\n", line);
+
 	tab = ft_strsplit(&line[1], ' ');
 	*length += 3;
-	new = (GLfloat*)malloc(sizeof(GLfloat) * *length);
+	new = (GLfloat*)ft_memalloc(sizeof(GLfloat) * *length);
 	i = -1;
 	while (++i < *length - 3)
 		new[i] = array[i];
 	free(array);
 	array = new;
 	j = -1;
-	// int l = 0;
-	// while(tab[l])
-	// {
-	// 	printf("%s\n", tab[l]);
-	// 	l+=1;
-	// }
 	while (tab[++j] != NULL)
 	{
 		array[*length - 3 + j] = (GLfloat)ft_atof(tab[j]);
-		// printf("%f %f\n", array[*length - 6 + j], array[*length - 3 + j]);
 		ft_strdel(&tab[j]);
 	}
 	ft_strdel(&tab[j]);
-	free(tab);
-	tab = NULL;
+	ft_memdel((void *)&tab);
 	return (array);
 }
 
@@ -94,8 +86,7 @@ GLuint	*append_indices(GLuint *array, char *line, int *length)
 		ft_strdel(&tab[j]);
 	}
 	ft_strdel(&tab[j]);
-	free(tab);
-	tab = NULL;
+	ft_memdel((void *)&tab);
 	return (array);
 }
 
@@ -113,24 +104,19 @@ void	load_obj(t_model *model, char *filename)
 	model->indices = (GLuint*)ft_memalloc(sizeof(GLuint) * 3);
 	if ((fd = open(filename, O_RDWR)) == -1)
 		ft_terminate("obj file opening failed.");
-	// int i = 0;
 	while (get_next_line(fd, &line) > 0)
 	{
 		if (line[0] == 'v' && line[1] == ' ')
 		{
 			model->vertices = append_vertices(model->vertices, line, &v);
-			// i++;
 		}
 		else if (line[0] == 'f' && line[1] == ' ')
 			model->indices = append_indices(model->indices, line, &f);
 		ft_strdel(&line);
 	}
-	// printf("vVVVVV->%d\n", i);
 	ft_strdel(&line);
 	model->size_vertices = v * sizeof(GLfloat);
 	model->size_indices = f * sizeof(GLuint);
 	model->num_indices = f;
     model->num_vertices = v;
-	// e->model.center_axis = compute_center_axis(e->model.vertices, v);
-	// center_vertices(e, v);
 }

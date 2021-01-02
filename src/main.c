@@ -19,13 +19,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
 
-t_mouse mouse;
-t_camera *camera;
 
-float wasd[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 t_mat4 set_projection_matrix()
 {
 	float s;
@@ -40,8 +35,8 @@ t_mat4 set_projection_matrix()
 	ret.matrix[0][0] = s / ((float)SCR_WIDTH / (float)SCR_HEIGHT);
 	ret.matrix[1][1] = s;
 	ret.matrix[2][2] = -(far + near) / (far - near);
-	ret.matrix[2][3] = -2 * far * near / (far - near);
-	ret.matrix[3][2] = -1;
+	ret.matrix[2][3] = -1;
+	ret.matrix[3][2] = -2 * far * near / (far - near);
 	return (ret);
 }
 
@@ -74,18 +69,10 @@ int main(int argc, char **argv)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(0);
-	t_mat4 proj = set_projection_matrix(); //ft_mat4_projection(ft_deg_rad(90.f), 800 / 400, 0.1f, 10000.0f );//ft_mat4_projection(ft_deg_rad(45.f),(float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f );
-	//ft_mat4_print(set_projection_matrix());
-	printf("                            \n");
-	//ft_mat4_print(ft_mat4_projection(ft_deg_rad(45.f), 800 / 400, 0.1f, 100.0f));
-
+	t_mat4 proj = set_projection_matrix();
 	t_mat4 view = ft_mat4_identity_matrix();
-	camera = camera_init();
-	for (int i = 0; i < 4; i++)
-	{
-		printf("%f", wasd[i]);
-	}
-	printf("\n");
+	t_camera * camera = camera_init();
+
 	while (!glfwWindowShouldClose(gl.window))
 	{
 		// input
@@ -98,7 +85,6 @@ int main(int argc, char **argv)
 		glClear(GL_COLOR_BUFFER_BIT);
 		t_mat4 model_matrix = ft_mat4_identity_matrix();
 		//  model_matrix = ft_mat4_rotation_matrix((t_vec3){0,1,0},(float)glfwGetTime() * 1.0f);
-		//  model_matrix.matrix[7] = wasd[1]
 		view = ft_look_at(camera->position, ft_vec3_sum(camera->position,camera->camera_front), camera->camera_up);
 		
 
@@ -137,6 +123,8 @@ int main(int argc, char **argv)
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window)
 {
+	t_camera * camera;
+	camera = camera_init();
    const float cameraSpeed = 0.05f; // adjust accordingly
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera->position = ft_vec3_sum(camera->position, ft_vec3_scalar_multiply(camera->camera_front, cameraSpeed));
@@ -148,6 +136,12 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera->position = ft_vec3_sum(camera->position,
 		ft_vec3_scalar_multiply(ft_vec3_normalize(ft_vec3_cross_multiply(camera->camera_front, camera->camera_up)), cameraSpeed));
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		exit(0);
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		camera->position = ft_vec3_sum(camera->position, ft_vec3_scalar_multiply(camera->camera_up, cameraSpeed));
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		camera->position = ft_vec3_substract(camera->position, ft_vec3_scalar_multiply(camera->camera_up, cameraSpeed));
 }
 
 void mouse_callback(GLFWwindow *window, double xpos, double ypos)

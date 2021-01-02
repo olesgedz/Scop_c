@@ -18,6 +18,9 @@
 #include "ugl.h"
 #include "shader.h"
 #include "mesh.h"
+
+#define  SCR_WIDTH 800
+#define SCR_HEIGHT  600
 typedef struct s_mouse
 {
     int firstMouse;
