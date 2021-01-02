@@ -120,7 +120,7 @@ int main(int argc, char **argv)
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		t_mat4 model_matrix = ft_mat4_identity_matrix();
-		//  model_matrix = ft_mat4_rotation_matrix((t_vec3){0,1,0},(float)glfwGetTime() * 1.0f);
+		model_matrix = ft_mat4_rotation_matrix((t_vec3){0,1,0},(float)glfwGetTime() * 1.0f);
 		view = ft_look_at(camera->position, ft_vec3_sum(camera->position,camera->camera_front), camera->camera_up);
 		
 
