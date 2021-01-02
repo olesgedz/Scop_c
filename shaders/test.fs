@@ -1,4 +1,4 @@
-#version 330 core
+#version 410 core
 out vec4 FragColor;
 uniform int color;
 flat in vec4	fragment_color_f;

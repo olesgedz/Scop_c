@@ -16,9 +16,55 @@
 #include "libmath.h"
 #include "camera.h"
 #include "bmp.h"
+#define CIMGUI_DEFINE_ENUMS_AND_STRUCTS
+#include "cimgui.h"
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
+/* Platform */
+static GLFWwindow *win;
+struct ImGuiContext* ctx;
+struct ImGuiIO* io;
+    
+// void gui_init() {
+//     // IMGUI_CHECKVERSION();
+//     ctx = igCreateContext(NULL);
+//     io  = igGetIO();
+
+//     const char* glsl_version = "#version 330 core";
+//     ImGui_ImplGlfw_InitForOpenGL(win, true);
+//     ImGui_ImplOpenGL3_Init(glsl_version);
+
+//     // Setup style
+//     igStyleColorsDark(NULL);
+// }
+
+// void gui_terminate() {
+//     ImGui_ImplOpenGL3_Shutdown();
+//     ImGui_ImplGlfw_Shutdown();
+//     igDestroyContext(ctx);
+// }
+
+// void gui_render() {
+//     igRender();
+//     ImGui_ImplOpenGL3_RenderDrawData(igGetDrawData());
+// }
+
+// gui_update() {
+//     ImGui_ImplOpenGL3_NewFrame();
+//     ImGui_ImplGlfw_NewFrame();
+//     igNewFrame();
+
+//     igBegin("Test", NULL, 0);
+//     igText("Test");
+//     igButton("Test",(struct ImVec2){0,0});
+//     igEnd();
+
+//     // // Normally user code doesn't need/want to call this because positions are saved in .ini file anyway. 
+//     // // Here we just want to make the demo initial state a bit more friendly!
+//     // igSetNextWindowPos((struct ImVec2){0,0}, ImGuiCond_FirstUseEver,(struct ImVec2){0,0} ); 
+//     igShowDemoWindow(NULL);
+// }
 
 
 t_mat4 set_projection_matrix()
@@ -88,6 +134,10 @@ int main(int argc, char **argv)
 		model_bind_texture(&model);
 	}
 	glfwSetCursorPosCallback(gl.window, mouse_callback);
+	// gui_init();
+	 igCreateContext(NULL);
+  ImGuiIO *io = igGetIO();
+	
 	glEnable(GL_DEPTH_TEST);
 	unsigned int VBO, VAO, EBO;
 	glGenBuffers(1, &VBO);
@@ -114,7 +164,7 @@ int main(int argc, char **argv)
 		// input
 		// -----
 		processInput(gl.window);
-
+		// gui_update();
 		// render
 		// ------
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -141,10 +191,22 @@ int main(int argc, char **argv)
 		// glDrawArrays(GL_TRIANGLES, 0, model.num_vertices / 3);
 		glDrawElements(GL_TRIANGLES, model.num_indices, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
+		ImGui_ImplOpenGL3_NewFrame();
+		igNewFrame();
+		igBegin("mainwindow",NULL,ImGuiWindowFlags_NoTitleBar);
+		 igText("Hello World!");
+		 float a = 7;
+		igSliderFloat("float", &a, 0.0f, 1.0f, "%.3f", 0);
+		igText("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io->Framerate, io->Framerate);
+		igEnd();
+    igShowDemoWindow(NULL);
+
+    igRender();
+		// gui_render();
 		glfwSwapBuffers(gl.window);
 		glfwPollEvents();
 	}
-
+	// gui_terminate();
 	// optional: de-allocate all resources once they've outlived their purpose:
 	// ------------------------------------------------------------------------
 	glDeleteVertexArrays(1, &VAO);

@@ -15,7 +15,7 @@ FLAGS = -g # -Wall -Wextra -Werror
 CC = clang
 
 INCLUDES = -I include/ -I./libs/glfw/include/ -I./libs/glad/include/ -I./include/ \
- -I./libs/stb_image/ -I./libs/libft/includes/ -I./libs/libmath/includes/ # -I./libs/imgui/ -I./libs/imgui/examples/
+ -I./libs/stb_image/ -I./libs/libft/includes/ -I./libs/libmath/includes/ -I./libs/cimgui/ #-I./libs/imgui/examples/
 
 HEADERS_DIRECTORY = 
 HEADERS_LIST = 
@@ -31,6 +31,7 @@ LIBFT_DIRECTORY := $(DIRECTORY)/libs/libft/
 LIBFT:= $(LIBFT_DIRECTORY)/libft.a
 LIBMATH_DIRECTORY := $(DIRECTORY)/libs/libmath/
 LIBMATH := $(LIBMATH_DIRECTORY)libmath.a
+CIMGUI_DIRECTORY := $(DIRECTORY)/libs/cimgui/
 SRCS_DIRECTORY = ./src/
 SRCS_LIST = main.c \
 			initgl.c\
@@ -76,7 +77,7 @@ ifeq ($(detected_OS),Linux)
 endif
 ifeq ($(detected_OS),Darwin)  
 	LIBRARIES = -L./libs/libft/ -lft  -L./libs/glad/ -lglad -L./libs/glfw/src/ -lglfw3  -L./libs/libmath/ -lmath   # Mac OS X
-	LIBRARIES += -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+	LIBRARIES +=  -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 endif
 
 
@@ -86,13 +87,14 @@ all:  $(MAKES) $(NAME)
 
 
 $(NAME): $(OBJS) $(HEADERS) $(GLFW)
-	@$(CC) $(FLAGS)  $(INCLUDES) $(OBJS)  -o $(NAME) $(LIBRARIES)
+	@$(CC) $(FLAGS)  $(INCLUDES) $(OBJS)  -o $(NAME) $(LIBRARIES)  ./cimgui.dylib
 	@echo "$(CLEAR_LINE)[`expr $(CURRENT_FILES) '*' 100 / $(TOTAL_FILES) `%] $(COL_BLUE)[$(NAME)] $(COL_GREEN)Finished compilation. Output file : $(COL_VIOLET)$(PWD)/$(NAME)$(COL_END)"
 
 $(MAKES):
 	$(MAKE) -sC $(GLAD_DIRECTORY)
 	$(MAKE) -sC $(LIBFT_DIRECTORY)
 	$(MAKE) -sC $(LIBMATH_DIRECTORY)
+	$(MAKE) -sC $(CIMGUI_DIRECTORY)
 
 
 $(OBJS_DIRECTORY):
