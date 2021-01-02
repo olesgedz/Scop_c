@@ -13,6 +13,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 #include "libmath.h"
+#include "scop.h"
 typedef struct s_camera
 {
 	int firstMouse;
@@ -26,7 +27,13 @@ typedef struct s_camera
 	t_vec3 camera_up;
 	t_vec3 camera_right;
 	t_vec3 camera_front;
+	float pitch;
+	float yaw;
+	float m_sesivity;
+	t_mouse * mouse;
 } t_camera;
 
 t_camera *camera_init();
+void camera_update();
+void camera_process(float xoffset, float yoffset);
 #endif

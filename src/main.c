@@ -152,38 +152,24 @@ void processInput(GLFWwindow *window)
 
 void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 {
+	t_camera * cam;
 
-	printf("ok\n");
-	if (mouse.firstMouse)
+	cam = camera_init();
+
+	if (cam->mouse->firstMouse)
 	{
-		mouse.lastX = xpos;
-		mouse.lastY = ypos;
-		mouse.firstMouse = 0;
+		cam->mouse->lastX = xpos;
+		cam->mouse->lastY = ypos;
+		cam->mouse->firstMouse = 0;
 	}
 
-	float xoffset = xpos - mouse.lastX;
-	float yoffset = mouse.lastY - ypos; // reversed since y-coordinates go from bottom to top
+	float xoffset = xpos - cam->mouse->lastX;
+	float yoffset = cam->mouse->lastY - ypos; 
 
-	mouse.lastX = xpos;
-	mouse.lastY = ypos;
-	float yaw = yaw + xoffset;
-	float pitch = pitch + yoffset;
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-	t_vec3 front;
-	// front.x = cos(ToRadians(Yaw)) * cos(ToRadians(Pitch));
-	// front.y = sin(ToRadians(Pitch));
-	// front.z = sin(ToRadians(Yaw)) * cos(ToRadians(Pitch));
-	// cameraFront = Normalize(front); 
-	// cameraRight = Normalize(Cross(cameraFront, WorldUp));  
-	// cameraUp = Normalize(Cross(cameraRight, cameraFront));
- 
-	// if (!cursor)
-	// {
-	// 	camera.ProcessMouseMovement(xoffset, yoffset);
-	// }
+	cam->mouse->lastX = xpos;
+	cam->mouse->lastY = ypos;
+
+	camera_process(xoffset, yoffset);
 }
 // void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 // {
