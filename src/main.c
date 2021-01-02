@@ -15,10 +15,10 @@
 #include "mesh.h"
 #include "libmath.h"
 #include "camera.h"
+#include "bmp.h"
+
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
-
-// settings
 
 
 t_mat4 set_projection_matrix()
@@ -40,19 +40,55 @@ t_mat4 set_projection_matrix()
 	return (ret);
 }
 
+void load_texture( t_model *model, char * filename)
+{
+	if (filename)
+	{
+		model->texture.data = parse_bmp(filename, &model->texture.width, &model->texture.height);
+		if (model->texture.data)
+		{
+			glGenTextures(1, &model->texture.id);
+  			glBindTexture(GL_TEXTURE_2D, model->texture.id);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, model->texture.width, model->texture.height, 0, GL_RGB, GL_UNSIGNED_BYTE, model->texture.data);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			model->texture_exists = 1;
+		}
+		else
+			ft_putstr("Failed to parsing texture\n");
+	}
+	else
+	{
+		ft_putstr("Failed to load texture\n");
+
+	}
+}
+
+void model_bind_texture(t_model * model)
+{
+	if(model->texture.data)
+	{
+		model->shader->set_int(model->shader, "texture1", 0);
+	}
+}
+
+
 int main(int argc, char **argv)
 {
 	t_gl gl;
 	init_gl(SCR_HEIGHT, SCR_HEIGHT, &gl);
 
-	t_shader shader;
-	mgl_shader_create(&shader, "./shaders/test.vs", "./shaders/test.fs");
 
 	t_model model;
+	model.texture_exists = 0;
 	load_obj(&model, argv[1]);
-
+	model.shader = mgl_shader_create("./shaders/test.vs", "./shaders/test.fs");
+	if (argc == 3)
+	{
+		load_texture( &model, argv[2]);
+		model_bind_texture(&model);
+	}
 	glfwSetCursorPosCallback(gl.window, mouse_callback);
-
+	glEnable(GL_DEPTH_TEST);
 	unsigned int VBO, VAO, EBO;
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
@@ -82,7 +118,7 @@ int main(int argc, char **argv)
 		// render
 		// ------
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		t_mat4 model_matrix = ft_mat4_identity_matrix();
 		//  model_matrix = ft_mat4_rotation_matrix((t_vec3){0,1,0},(float)glfwGetTime() * 1.0f);
 		view = ft_look_at(camera->position, ft_vec3_sum(camera->position,camera->camera_front), camera->camera_up);
@@ -90,12 +126,13 @@ int main(int argc, char **argv)
 
 		//  ft_bzero(wasd, sizeof(wasd));
 		// ft_mat4_print(view);
-		shader.use(&shader);
+		model.shader->use(model.shader);
 		glBindVertexArray(VAO);
-		shader.set_int(&shader, "color", 0);
-		shader.set_mat4(&shader, "model", &model_matrix);
-		shader.set_mat4(&shader, "view", &view);
-		shader.set_mat4(&shader, "projection", &proj);
+		model.shader->set_int(model.shader, "color", 0);
+		model.shader->set_int(model.shader, "texture_exists", model.texture_exists);
+		model.shader->set_mat4(model.shader, "model", &model_matrix);
+		model.shader->set_mat4(model.shader, "view", &view);
+		model.shader->set_mat4(model.shader, "projection", &proj);
 
 		// model_matrix = mat4_mul(mat4_transpose(model_matrix),
 		// mat4_mul(view, proj));

@@ -36,8 +36,10 @@ int shader_use(t_shader *shader)
 	return 0;
 }
 
-int mgl_shader_create(t_shader *shader, char *v_srcfile, char *f_srcfile)
+t_shader *mgl_shader_create(char *v_srcfile, char *f_srcfile)
 {
+
+	t_shader * shader = ft_memalloc(sizeof(t_shader));
 	shader->vertex_shader = glCreateShader(GL_VERTEX_SHADER);
 	shader->vertex_shader_src = readfile(v_srcfile);
 	glShaderSource(shader->vertex_shader, 1, (const char *const *)&shader->vertex_shader_src, NULL);
@@ -79,7 +81,7 @@ int mgl_shader_create(t_shader *shader, char *v_srcfile, char *f_srcfile)
 	shader->use = shader_use;
 	shader->set_int = mgl_shader_setInt;
 	shader->set_mat4 = mgl_shader_setMat4;
-	return 0;
+	return shader;
 }
 void mgl_shader_setInt(t_shader *shader, char *name, int value)
 {

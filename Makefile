@@ -36,7 +36,8 @@ SRCS_LIST = main.c \
 			initgl.c\
 			shader.c\
 			parser.c\
-			camera.c
+			camera.c\
+			bmp.c
 
 OBJS_DIRECTORY = objects/
 OBJS_LIST = $(patsubst %.c, %.o, $(SRCS_LIST))
