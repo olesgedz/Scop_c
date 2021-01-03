@@ -91,6 +91,30 @@ GLuint	*append_indices(GLuint *array, char *line, int *length)
 }
 
 
+t_vec3	compute_center_axis(GLfloat *vertices, int num_vertices)
+{
+	int		i;
+	t_vec3	max;
+	t_vec3	min;
+	t_vec3	center;
+
+	i = 0;
+	max = (t_vec3){0, 0, 0};
+	min = (t_vec3){0, 0, 0};
+	while (i < num_vertices - 6)
+	{
+		vertices[i] > max.x ? max.x = vertices[i] : 0;
+		vertices[i] < min.x ? min.x = vertices[i] : 0;
+		vertices[i + 1] > max.y ? max.y = vertices[i + 1] : 0;
+		vertices[i + 1] < min.y ? min.y = vertices[i + 1] : 0;
+		vertices[i + 2] > max.z ? max.z = vertices[i + 2] : 0;
+		vertices[i + 2] < min.z ? min.z = vertices[i + 2] : 0;
+		i += 6;
+	}
+	center = ft_vec3_scalar_multiply(ft_vec3_sum(max, min), 0.5);
+	return (center);
+}
+
 void	load_obj(t_model *model, char *filename)
 {
 	int		fd;
@@ -119,4 +143,5 @@ void	load_obj(t_model *model, char *filename)
 	model->size_indices = f * sizeof(GLuint);
 	model->num_indices = f;
     model->num_vertices = v;
+	model->center = ft_vec3_neg(compute_center_axis(model->vertices, model->num_vertices));
 }

@@ -26,19 +26,18 @@ GLAD_DIRECTORY := $(DIRECTORY)/libs/glad/
 GLAD := $(GLAD_DIRECTORY)libglad.a
 GLFW_DIRECTORY := $(DIRECTORY)/libs/glfw/
 GLFW := $(GLFW_DIRECTORY)src/libglfw3.a
-IMGUI_DIRECTORY := $(DIRECTORY)/libs/imgui
 LIBFT_DIRECTORY := $(DIRECTORY)/libs/libft/
 LIBFT:= $(LIBFT_DIRECTORY)/libft.a
 LIBMATH_DIRECTORY := $(DIRECTORY)/libs/libmath/
 LIBMATH := $(LIBMATH_DIRECTORY)libmath.a
-CIMGUI_DIRECTORY := $(DIRECTORY)/libs/cimgui/
 SRCS_DIRECTORY = ./src/
 SRCS_LIST = main.c \
 			initgl.c\
 			shader.c\
 			parser.c\
 			camera.c\
-			bmp.c
+			bmp.c\
+		
 
 OBJS_DIRECTORY = objects/
 OBJS_LIST = $(patsubst %.c, %.o, $(SRCS_LIST))
@@ -87,14 +86,13 @@ all:  $(MAKES) $(NAME)
 
 
 $(NAME): $(OBJS) $(HEADERS) $(GLFW)
-	@$(CC) $(FLAGS)  $(INCLUDES) $(OBJS)  -o $(NAME) $(LIBRARIES)  ./cimgui.dylib
+	@$(CC) $(FLAGS)  $(INCLUDES) $(OBJS)  -o $(NAME) $(LIBRARIES)
 	@echo "$(CLEAR_LINE)[`expr $(CURRENT_FILES) '*' 100 / $(TOTAL_FILES) `%] $(COL_BLUE)[$(NAME)] $(COL_GREEN)Finished compilation. Output file : $(COL_VIOLET)$(PWD)/$(NAME)$(COL_END)"
 
 $(MAKES):
 	$(MAKE) -sC $(GLAD_DIRECTORY)
 	$(MAKE) -sC $(LIBFT_DIRECTORY)
 	$(MAKE) -sC $(LIBMATH_DIRECTORY)
-	$(MAKE) -sC $(CIMGUI_DIRECTORY)
 
 
 $(OBJS_DIRECTORY):

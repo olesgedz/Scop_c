@@ -35,6 +35,7 @@ typedef struct	s_model
 	int				grey;
 	int 			lines;
 	int 			texture_mode;
+	t_vec3 			center;
 	t_shader 		*shader;
 
 }				t_model;
