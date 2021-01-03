@@ -20,6 +20,9 @@ typedef struct	s_model
 	// t_mat4			rotation;
 	GLfloat			*vertices;
 	GLuint			*indices;
+	GLfloat			*r_vertices;
+	unsigned int	r_size_vertices;
+
 	unsigned int	size_indices;
 	unsigned int	size_vertices;
 	unsigned int	num_indices;

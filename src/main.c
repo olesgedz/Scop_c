@@ -91,15 +91,13 @@ int main(int argc, char **argv)
 
 	
 	glEnable(GL_DEPTH_TEST);
-	unsigned int VBO, VAO, EBO;
+	unsigned int VBO, VAO;
 	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, model.size_vertices, model.vertices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.size_indices, model.indices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, model.r_size_vertices, model.r_vertices, GL_STATIC_DRAW);
+	
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0,
 						  (GLvoid *)0);
@@ -110,7 +108,6 @@ int main(int argc, char **argv)
 	t_mat4 proj = set_projection_matrix();
 	t_mat4 view = ft_mat4_identity_matrix();
 	t_camera * camera = camera_init();
-
 	while (!glfwWindowShouldClose(gl.window))
 	{
 		// input
@@ -128,7 +125,6 @@ int main(int argc, char **argv)
 		model_matrix = ft_mat4_multiply_mat4(model_matrix, ft_mat4_rotation_matrix((t_vec3){0,1,0},(float)glfwGetTime() * 1.0f));
 		view = ft_look_at(camera->position, ft_vec3_sum(camera->position,camera->camera_front), camera->camera_up);
 		
-
 		//  ft_bzero(wasd, sizeof(wasd));
 		// ft_mat4_print(view);
 		model.shader->use(model.shader);
@@ -143,8 +139,8 @@ int main(int argc, char **argv)
 		// mat4_mul(view, proj));
 		// shader.set_mat4(&shader, "model", &model_matrix);
 
-		// glDrawArrays(GL_TRIANGLES, 0, model.num_vertices / 3);
-		glDrawElements(GL_TRIANGLES, model.num_indices, GL_UNSIGNED_INT, 0);
+		 glDrawArrays(GL_TRIANGLES, 0, model.num_indices);
+		// glDrawElements(GL_TRIANGLES, model.num_indices, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 	
 		// gui_render();
