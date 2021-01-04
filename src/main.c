@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "scop.h"
 #include "mesh.h"
 #include "libmath.h"
@@ -19,6 +21,68 @@
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
+
+void	read_header(char *filename, t_model * model)
+{
+	FILE	*file;
+
+	if ((file = fopen(filename, "r")) == NULL)
+		ft_terminate("bmp file opening (fopen) failed.");
+	fseek(file, 18, SEEK_SET);
+	fread(&model->texture.width, 4, 1, file);
+	fread(&model->texture.height, 4, 1, file);
+	fseek(file, 2, SEEK_CUR);
+	fread(&model->texture.bpp, 2, 1, file);
+	fclose(file);
+	model->texture.oop = model->texture.bpp / 8;
+	model->texture.sl = model->texture.width * model->texture.oop;
+	model->texture.width < 0 ? model->texture.width = -model->texture.width : 0;
+	model->texture.height < 0 ? model->texture.height = -model->texture.height : 0;
+	model->texture.size = model->texture.sl * model->texture.height;
+	printf ("size - %d\n", model->texture.bpp);
+}
+
+void	get_image(t_texture *texture, char *buffer, int i)
+{
+	int	h;
+	int	j;
+	int	size;
+
+	h = 0;
+	size = texture->size * 2;
+	texture->data = (unsigned char*)malloc(sizeof(unsigned char) * size);
+	while (i >= 0)
+	{
+		i -= texture->sl;
+		j = 0;
+		while (j < texture->sl)
+		{
+			texture->data[h + j] = (unsigned char)buffer[i + j + 2];
+			texture->data[h + j + 1] = (unsigned char)buffer[i + j + 1];
+			texture->data[h + j + 2] = (unsigned char)buffer[i + j];
+			j += 3;
+		}
+		h += texture->sl;
+	}
+}
+
+void	load_bmp(t_model * model, char *filename)
+{
+	int		fd;
+	int		i;
+	char	*buffer;
+
+	read_header(filename, model);
+	buffer = (char*)malloc(sizeof(char) * model->texture.size + 1);
+	if ((fd = open(filename, O_RDWR)) == -1)
+		ft_terminate("bmp file opening failed.");
+	lseek(fd, 54, SEEK_SET);
+	i = read(fd, buffer, model->texture.size);
+	printf ("i --- >%d\n", i);
+	get_image(&model->texture, buffer, i);
+	ft_strdel((char**)&buffer);
+	close(fd);
+}
 
 
 t_mat4 set_projection_matrix()
@@ -84,23 +148,26 @@ int main(int argc, char **argv)
 	model.shader = mgl_shader_create("./shaders/test.vs", "./shaders/test.fs");
 	if (argc == 3)
 	{
-		load_texture( &model, argv[2]);
+		load_bmp( &model, argv[2]);
 		model_bind_texture(&model);
+		glGenTextures(1, &model.texture.id);
+  		glBindTexture(GL_TEXTURE_2D, model.texture.id);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, model.texture.width, model.texture.height, 0, GL_RGB, GL_UNSIGNED_BYTE, model.texture.data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		model.texture_exists = 1;
 	}
+	// for (int i = 0; i < model.texture.size; i++)
+	// {
+	// 	printf("%d\n", model.texture.data[i]);
+	// }
 	glfwSetCursorPosCallback(gl.window, mouse_callback);
 	
 	glEnable(GL_DEPTH_TEST);
 	glGenBuffers(1, &model.vbo_vertices);
 	glGenVertexArrays(1, &model.voa);
 	glBindVertexArray(model.voa);
-	float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-     0.0f,  0.5f, 0.0f
-};  
 	glBindBuffer(GL_ARRAY_BUFFER, model.vbo_vertices);
 	glBufferData(GL_ARRAY_BUFFER, model.num_vertices * sizeof(float), model.vertices, GL_STATIC_DRAW);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0,
 						  (GLvoid *)0);
@@ -135,6 +202,7 @@ int main(int argc, char **argv)
 		model.shader->set_mat4(model.shader, "model", &model_matrix);
 		model.shader->set_mat4(model.shader, "view", &view);
 		model.shader->set_mat4(model.shader, "projection", &proj);
+		glBindTexture(GL_TEXTURE_2D, model.texture.id);
 		glDrawArrays(GL_TRIANGLES, 0, model.num_vertices);
 		glBindVertexArray(0);
 		glfwSwapBuffers(gl.window);

@@ -116,15 +116,15 @@ t_vec3	compute_center_axis(GLfloat *vertices, int num_vertices)
 }
 t_vec3 get_normal(t_vec3 v1, t_vec3 v2, t_vec3 v3)
 {
-t_vec3 temp1, temp2;
-t_vec3 normal;
+	t_vec3 temp1, temp2;
+	t_vec3 normal;
 
-temp1 = ft_vec3_substract(v2, v1);
-temp2 = ft_vec3_substract(v3, v1);
+	temp1 = ft_vec3_substract(v2, v1);
+	temp2 = ft_vec3_substract(v3, v1);
 
-// assume * represents cross-product
-normal = ft_vec3_cross_multiply(temp1, temp2);  
-normal = ft_vec3_normalize(normal);
+	// assume * represents cross-product
+	normal = ft_vec3_cross_multiply(temp1, temp2);  
+	normal = ft_vec3_normalize(normal);
 
 return normal;
 }

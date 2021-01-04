@@ -13,6 +13,10 @@ typedef struct s_texture
 	int width;
 	int height;
 	int nr_channels;
+	short bpp;
+	short oop;
+	int sl;
+	int size;
 	unsigned char * data;
 }  t_texture;
 
