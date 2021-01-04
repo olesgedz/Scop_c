@@ -144,25 +144,18 @@ void	load_obj(t_model *model, char *filename)
 	model->num_indices = f;
     model->num_vertices = v;
 	model->center = ft_vec3_neg(compute_center_axis(model->vertices, model->num_vertices));
-	model->r_vertices = ft_memalloc(sizeof(float) *  model->num_indices);
+	model->r_vertices = ft_memalloc(sizeof(float) *  model->num_indices * 3);
 	int i = 0;
+	int t = 0;
 	while (i < model->num_indices)
 	{
-		// model->r_vertices[i] = model->vertices[model->indices[i]];
-		// model->r_vertices[i+1] = model->vertices[model->indices[i]+1];
-		// model->r_vertices[i+2] = model->vertices[model->indices[i]+ 2];
-		// 	printf ("vertx %f %f %f\n",model->vertices[i], model->vertices[i+1], model->vertices[i+2]);
-		// i+=3;
-		printf("ind -> %d \n", model->indices[i]);
+		model->r_vertices[t] = model->vertices[model->indices[i] * 3 + 0];
+		model->r_vertices[t + 1] = model->vertices[model->indices[i] * 3 + 1];
+		model->r_vertices[t + 2] = model->vertices[model->indices[i] * 3 + 2];
+		printf ("vertx %f %f %f\n",model->r_vertices[i], model->r_vertices[i+1], model->r_vertices[i+2]);
 		i++;
+		t+=3;
+		// printf("ind -> %d \n", model->indices[i]);
 	}
-	i = 0;
-	// while (i < model->num_indices)
-	// {
-	// 	printf ("vertx %f %f %f\n", model->r_vertices[i], model->r_vertices[i+1], model->r_vertices[i+2]);
-	// 	i+=3;
-	// }
-	int t = 2;
-	
-	model->r_size_vertices = model->num_indices;
+	model->r_size_vertices = model->num_indices * 3;
 }

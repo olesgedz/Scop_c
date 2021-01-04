@@ -95,9 +95,14 @@ int main(int argc, char **argv)
 	glGenBuffers(1, &VBO);
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
+	float vertices[] = {
+    -0.5f, -0.5f, 0.0f,
+     0.5f, -0.5f, 0.0f,
+     0.0f,  0.5f, 0.0f
+};  
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, model.r_size_vertices, model.r_vertices, GL_STATIC_DRAW);
-	
+	glBufferData(GL_ARRAY_BUFFER, model.r_size_vertices * sizeof(float), model.r_vertices, GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0,
 						  (GLvoid *)0);
@@ -139,7 +144,7 @@ int main(int argc, char **argv)
 		// mat4_mul(view, proj));
 		// shader.set_mat4(&shader, "model", &model_matrix);
 
-		 glDrawArrays(GL_TRIANGLES, 0, model.num_indices);
+		 glDrawArrays(GL_TRIANGLES, 0, model.r_size_vertices);
 		// glDrawElements(GL_TRIANGLES, model.num_indices, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 	
