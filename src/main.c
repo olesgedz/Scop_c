@@ -88,20 +88,18 @@ int main(int argc, char **argv)
 		model_bind_texture(&model);
 	}
 	glfwSetCursorPosCallback(gl.window, mouse_callback);
-
 	
 	glEnable(GL_DEPTH_TEST);
-	unsigned int VBO, VAO;
-	glGenBuffers(1, &VBO);
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	glGenBuffers(1, &model.vbo_vertices);
+	glGenVertexArrays(1, &model.voa);
+	glBindVertexArray(model.voa);
 	float vertices[] = {
     -0.5f, -0.5f, 0.0f,
      0.5f, -0.5f, 0.0f,
      0.0f,  0.5f, 0.0f
 };  
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, model.r_size_vertices * sizeof(float), model.r_vertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, model.vbo_vertices);
+	glBufferData(GL_ARRAY_BUFFER, model.num_vertices * sizeof(float), model.vertices, GL_STATIC_DRAW);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0,
@@ -109,57 +107,42 @@ int main(int argc, char **argv)
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+	glGenBuffers(1, &model.vbo_normals);
+	glBindBuffer(GL_ARRAY_BUFFER, model.vbo_normals);
+	glBufferData(GL_ARRAY_BUFFER, model.num_normals * sizeof(float),
+				model.normals, GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(1);
 	glBindVertexArray(0);
+
+
 	t_mat4 proj = set_projection_matrix();
 	t_mat4 view = ft_mat4_identity_matrix();
 	t_camera * camera = camera_init();
 	while (!glfwWindowShouldClose(gl.window))
 	{
-		// input
-		// -----
 		processInput(gl.window);
-		// gui_update();
-		// render
-		// ------
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		t_mat4 model_matrix = ft_mat4_identity_matrix();
 		model_matrix = ft_mat4_multiply_mat4(ft_mat4_translation_matrix(model.center), model_matrix);
-		// ft_mat4_print(model_matrix);
-		// exit(1);
 		model_matrix = ft_mat4_multiply_mat4(model_matrix, ft_mat4_rotation_matrix((t_vec3){0,1,0},(float)glfwGetTime() * 1.0f));
 		view = ft_look_at(camera->position, ft_vec3_sum(camera->position,camera->camera_front), camera->camera_up);
-		
-		//  ft_bzero(wasd, sizeof(wasd));
-		// ft_mat4_print(view);
 		model.shader->use(model.shader);
-		glBindVertexArray(VAO);
+		glBindVertexArray(model.voa);
 		model.shader->set_int(model.shader, "color", 0);
 		model.shader->set_int(model.shader, "texture_exists", model.texture_exists);
 		model.shader->set_mat4(model.shader, "model", &model_matrix);
 		model.shader->set_mat4(model.shader, "view", &view);
 		model.shader->set_mat4(model.shader, "projection", &proj);
-
-		// model_matrix = mat4_mul(mat4_transpose(model_matrix),
-		// mat4_mul(view, proj));
-		// shader.set_mat4(&shader, "model", &model_matrix);
-
-		 glDrawArrays(GL_TRIANGLES, 0, model.r_size_vertices);
-		// glDrawElements(GL_TRIANGLES, model.num_indices, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLES, 0, model.num_vertices);
 		glBindVertexArray(0);
-	
-		// gui_render();
 		glfwSwapBuffers(gl.window);
 		glfwPollEvents();
 	}
-	// gui_terminate();
-	// optional: de-allocate all resources once they've outlived their purpose:
-	// ------------------------------------------------------------------------
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-
-	// glfw: terminate, clearing all previously allocated GLFW resources.
-	// ------------------------------------------------------------------
+	glDeleteVertexArrays(1, &model.voa);
+	glDeleteBuffers(1, &model.vbo_vertices);
+	glDeleteBuffers(1, &model.vbo_normals);
 	glfwTerminate();
 	return 0;
 }

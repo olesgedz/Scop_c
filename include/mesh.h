@@ -4,6 +4,9 @@
 #include "GLFW/glfw3.h"
 #include "stb_image.h"
 #include "shader.h"
+
+
+
 typedef struct s_texture
 {
 	unsigned int  id;
@@ -18,15 +21,22 @@ typedef struct	s_model
 {
 	// t_mat4			translation;
 	// t_mat4			rotation;
+	GLuint 			voa;
+	GLuint			vbo_vertices;
+	GLuint			vbo_normals;
 	GLfloat			*vertices;
+	GLfloat			*normals;
 	GLuint			*indices;
-	GLfloat			*r_vertices;
+	GLfloat			*temp_vertices;
 	unsigned int	r_size_vertices;
 
 	unsigned int	size_indices;
 	unsigned int	size_vertices;
+
 	unsigned int	num_indices;
 	unsigned int	num_vertices;
+	unsigned int	num_normals;
+
 
 	// t_vec3			center_axis;
 	// t_vec3			inertia;
@@ -37,6 +47,7 @@ typedef struct	s_model
 	int 			color;
 	int				grey;
 	int 			lines;
+	int				smooth;
 	int 			texture_mode;
 	t_vec3 			center;
 	t_shader 		*shader;

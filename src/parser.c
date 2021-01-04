@@ -114,6 +114,44 @@ t_vec3	compute_center_axis(GLfloat *vertices, int num_vertices)
 	center = ft_vec3_scalar_multiply(ft_vec3_sum(max, min), 0.5);
 	return (center);
 }
+t_vec3 get_normal(t_vec3 v1, t_vec3 v2, t_vec3 v3)
+{
+t_vec3 temp1, temp2;
+t_vec3 normal;
+
+temp1 = ft_vec3_substract(v2, v1);
+temp2 = ft_vec3_substract(v3, v1);
+
+// assume * represents cross-product
+normal = ft_vec3_cross_multiply(temp1, temp2);  
+normal = ft_vec3_normalize(normal);
+
+return normal;
+}
+void generate_normals(t_model * model, GLfloat *vertices)
+{
+	int i;
+	int t;
+	t_vec3 temp;
+
+	t = 0;
+	i = 0;
+	model->num_normals = model->num_indices * 3;
+	while (i < model->num_vertices)
+	{
+		temp = get_normal((t_vec3){vertices[i],vertices[i + 1],vertices[i + 2]},
+		(t_vec3){vertices[i + 3],vertices[i + 4], vertices[i + 5]},
+		(t_vec3){vertices[i + 6],vertices[i + 7], vertices[i + 8]} );
+		t = -1;
+		while (++t < 3)
+		{
+			model->normals[i + 3 * t] = temp.x;
+			model->normals[i + 1 + 3 * t] = temp.y;
+			model->normals[i + 2 + 3 * t] = temp.z;
+		}
+		i += 9;
+	}
+}
 
 void	load_obj(t_model *model, char *filename)
 {
@@ -124,7 +162,7 @@ void	load_obj(t_model *model, char *filename)
 
 	v = 0;
 	f = 0;
-	model->vertices = (GLfloat*)ft_memalloc(sizeof(GLfloat) * 3);
+	model->temp_vertices = (GLfloat*)ft_memalloc(sizeof(GLfloat) * 3);
 	model->indices = (GLuint*)ft_memalloc(sizeof(GLuint) * 3);
 	if ((fd = open(filename, O_RDWR)) == -1)
 		ft_terminate("obj file opening failed.");
@@ -132,7 +170,7 @@ void	load_obj(t_model *model, char *filename)
 	{
 		if (line[0] == 'v' && line[1] == ' ')
 		{
-			model->vertices = append_vertices(model->vertices, line, &v);
+			model->temp_vertices = append_vertices(model->temp_vertices, line, &v);
 		}
 		else if (line[0] == 'f' && line[1] == ' ')
 			model->indices = append_indices(model->indices, line, &f);
@@ -143,19 +181,22 @@ void	load_obj(t_model *model, char *filename)
 	model->size_indices = f * sizeof(GLuint);
 	model->num_indices = f;
     model->num_vertices = v;
-	model->center = ft_vec3_neg(compute_center_axis(model->vertices, model->num_vertices));
-	model->r_vertices = ft_memalloc(sizeof(float) *  model->num_indices * 3);
+	model->center = ft_vec3_neg(compute_center_axis(model->temp_vertices, model->num_vertices));
+	model->vertices = ft_memalloc(sizeof(float) *  model->num_indices * 3);
 	int i = 0;
 	int t = 0;
 	while (i < model->num_indices)
 	{
-		model->r_vertices[t] = model->vertices[model->indices[i] * 3 + 0];
-		model->r_vertices[t + 1] = model->vertices[model->indices[i] * 3 + 1];
-		model->r_vertices[t + 2] = model->vertices[model->indices[i] * 3 + 2];
-		printf ("vertx %f %f %f\n",model->r_vertices[i], model->r_vertices[i+1], model->r_vertices[i+2]);
+		model->vertices[t] = model->temp_vertices[model->indices[i] * 3 + 0];
+		model->vertices[t + 1] = model->temp_vertices[model->indices[i] * 3 + 1];
+		model->vertices[t + 2] = model->temp_vertices[model->indices[i] * 3 + 2];
 		i++;
 		t+=3;
-		// printf("ind -> %d \n", model->indices[i]);
 	}
-	model->r_size_vertices = model->num_indices * 3;
+	model->num_vertices = model->num_indices * 3;
+	model->normals = ft_memalloc(sizeof(float) * model->num_indices * 3);
+	generate_normals(model, model->vertices);
+
+
+
 }
