@@ -6,7 +6,7 @@
 /*   By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/28 20:50:09 by olesgedz          #+#    #+#             */
-/*   Updated: 2021/01/05 21:28:54 by jblack-b         ###   ########.fr       */
+/*   Updated: 2021/01/05 22:35:54 by jblack-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,7 @@
 #include "bmp.h"
 #include "scene.h"
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height);
-void processInput(GLFWwindow *window);
+
 
 void	read_header(char *filename, t_model * model)
 {
@@ -262,23 +261,25 @@ void	update_time(t_scene *scene)
 }
 void renderer(t_gl *gl, t_model *model, t_scene *scene)
 {
+	t_mat4 model_matrix;
 	while (!glfwWindowShouldClose(gl->window))
 	{
-		
 		processInput(gl->window);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		update_time(scene);
-		t_mat4 model_matrix = ft_mat4_identity_matrix();
+		scene->model_matrix = ft_mat4_identity_matrix();
 		model_matrix = ft_mat4_multiply_mat4(ft_mat4_translation_matrix(model->center), model_matrix);
-		model_matrix = ft_mat4_multiply_mat4(model_matrix, ft_mat4_rotation_matrix((t_vec3){0,1,0},(float)glfwGetTime() * 1.0f));
+		model_matrix = ft_mat4_multiply_mat4(scene->model_matrix, ft_mat4_rotation_matrix((t_vec3){0,1,0},(float)glfwGetTime() * 1.0f));
 		scene->view = ft_look_at(scene->camera->position, ft_vec3_sum(scene->camera->position,scene->camera->camera_front), scene->camera->camera_up);
 		model->shader->use(model->shader);
 		glBindVertexArray(model->voa);
 		model->shader->set_int(model->shader, "color", 0);
 		model->shader->set_int(model->shader, "grey", model->grey);
-		model->shader->set_int(model->shader, "smooth", model->smooth);
+		model->shader->set_int(model->shader, "smoothc", model->smooth);
+		model->shader->set_int(model->shader, "normal_color", model->normal);
 		model->shader->set_int(model->shader, "texture_mode", model->texture_mode);
+		model->shader->set_int(model->shader, "light_color", model->light);
 		model->shader->set_mat4(model->shader, "model", &model_matrix);
 		model->shader->set_mat4(model->shader, "view", &scene->view);
 		model->shader->set_mat4(model->shader, "projection", &scene->proj);
@@ -292,9 +293,9 @@ void renderer(t_gl *gl, t_model *model, t_scene *scene)
 }
 int main(int argc, char **argv)
 {
-	t_gl gl;
-	t_model *  model;
-	t_scene * scene;
+	t_gl 	gl;
+	t_model	*model;
+	t_scene	*scene;
 	
 	check_params(argc, argv);
 	init_gl(SCR_HEIGHT, SCR_HEIGHT, &gl);
@@ -305,7 +306,7 @@ int main(int argc, char **argv)
 	{
 		load_bmp(model, argv[2]);
 		model_bind_texture(model);
-		upload_texture(model);	
+		upload_texture(model);
 	}
 	upload_model(model);
 	scene = scene_init(scene_create(), &gl, model);
@@ -314,10 +315,10 @@ int main(int argc, char **argv)
 	glDeleteBuffers(1, &model->vbo_vertices);
 	glDeleteBuffers(1, &model->vbo_normals);
 	glfwTerminate();
-	return 0;
+	return (0);
 }
 
-void key_switch(int *key)
+void	key_switch(int *key)
 {
 	if (*key == 0)
 		*key = 1;
@@ -329,27 +330,36 @@ void key_switch(int *key)
 
 void processInput(GLFWwindow *window)
 {
-	t_camera *camera;
-	t_scene  *scene;
+	t_camera	*camera;
+	t_scene		*scene;
+	float camera_speed;
+
 	camera = camera_init();
 	scene = scene_create();
-   const float cameraSpeed = 0.05f; 
+	camera_speed = 0.05f;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera->position = ft_vec3_sum(camera->position, ft_vec3_scalar_multiply(camera->camera_front, cameraSpeed));
+		camera->position = ft_vec3_sum(camera->position,
+		ft_vec3_scalar_multiply(camera->camera_front, camera_speed));
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera->position = ft_vec3_substract(camera->position, ft_vec3_scalar_multiply(camera->camera_front, cameraSpeed));
+		camera->position = ft_vec3_substract(camera->position,
+		ft_vec3_scalar_multiply(camera->camera_front, camera_speed));
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		camera->position = ft_vec3_substract(camera->position,
-		ft_vec3_scalar_multiply(ft_vec3_normalize(ft_vec3_cross_multiply(camera->camera_front, camera->camera_up)), cameraSpeed));
+		ft_vec3_scalar_multiply(ft_vec3_normalize(
+		ft_vec3_cross_multiply(camera->camera_front,
+		camera->camera_up)), camera_speed));
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera->position = ft_vec3_sum(camera->position,
-		ft_vec3_scalar_multiply(ft_vec3_normalize(ft_vec3_cross_multiply(camera->camera_front, camera->camera_up)), cameraSpeed));
+	ft_vec3_scalar_multiply(ft_vec3_normalize(ft_vec3_cross_multiply(
+	camera->camera_front, camera->camera_up)), camera_speed));
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		exit(0);
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-		camera->position = ft_vec3_sum(camera->position, ft_vec3_scalar_multiply(camera->camera_up, cameraSpeed));
+		camera->position = ft_vec3_sum(camera->position,
+	ft_vec3_scalar_multiply(camera->camera_up, camera_speed));
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-		camera->position = ft_vec3_substract(camera->position, ft_vec3_scalar_multiply(camera->camera_up, cameraSpeed));
+		camera->position = ft_vec3_substract(camera->position,
+	ft_vec3_scalar_multiply(camera->camera_up, camera_speed));
 	if ((scene->current_frame - scene->last_press) > 0.07)
 	{
 		scene->last_press = scene->current_frame;
@@ -357,31 +367,38 @@ void processInput(GLFWwindow *window)
 		{
 			key_switch(&scene->model->lines);
 			if (scene->model->lines == 1)
-				glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			else
-				glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 		if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
 			key_switch(&scene->model->grey);
+		if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
+			key_switch(&scene->model->smooth);
+		if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+			key_switch(&scene->model->texture_mode);
+		if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+			key_switch(&scene->model->light);
+		if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+			key_switch(&scene->model->normal);
 	}
-	
 }
 
 void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 {
-	t_camera * cam;
+	t_camera *cam;
 	float xoffset;
 	float yoffset;
 	cam = camera_init();
-	if (cam->mouse->firstMouse)
+	if (cam->mouse->first_mouse)
 	{
-		cam->mouse->lastX = xpos;
-		cam->mouse->lastY = ypos;
-		cam->mouse->firstMouse = 0;
+		cam->mouse->last_x = xpos;
+		cam->mouse->last_y = ypos;
+		cam->mouse->first_mouse = 0;
 	}
-	xoffset = xpos - cam->mouse->lastX;
-	yoffset = cam->mouse->lastY - ypos; 
-	cam->mouse->lastX = xpos;
-	cam->mouse->lastY = ypos;
+	xoffset = xpos - cam->mouse->last_x;
+	yoffset = cam->mouse->last_y - ypos;
+	cam->mouse->last_x = xpos;
+	cam->mouse->last_y = ypos;
 	camera_process(xoffset, yoffset);
 }

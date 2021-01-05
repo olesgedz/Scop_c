@@ -50,9 +50,11 @@ typedef struct	s_model
 	int				texture_exists;
 	int 			color;
 	int				grey;
-	int 			lines;
 	int				smooth;
 	int 			texture_mode;
+	int				normal;
+	int				light;
+	int				lines;
 	t_vec3 			center;
 	t_shader 		*shader;
 

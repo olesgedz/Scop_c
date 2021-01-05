@@ -6,7 +6,7 @@
 #    By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/28 20:37:14 by olesgedz          #+#    #+#              #
-#    Updated: 2020/03/06 20:42:58 by jblack-b         ###   ########.fr        #
+#    Updated: 2021/01/05 23:30:44 by jblack-b         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,6 +34,7 @@ SRCS_DIRECTORY = ./src/
 SRCS_LIST = main.c \
 			initgl.c\
 			shader.c\
+			shader_set.c\
 			parser.c\
 			camera.c\
 			bmp.c\

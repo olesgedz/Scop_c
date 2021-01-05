@@ -6,7 +6,7 @@
 /*   By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/05 19:16:48 by jblack-b          #+#    #+#             */
-/*   Updated: 2021/01/05 21:26:42 by jblack-b         ###   ########.fr       */
+/*   Updated: 2021/01/05 22:34:59 by jblack-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ typedef struct	    s_scene
 	t_vec3          light_pos;
     t_mat4          proj;
     t_mat4          view;
+    t_mat4          model_matrix;
     t_camera        *camera;
     t_model         *model;
     t_gl            *gl;
