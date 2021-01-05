@@ -28,9 +28,11 @@ struct s_shader
     int (*use)(t_shader *shader);
     void (*set_int)(t_shader *shader, char *name, int value);
     void (*set_mat4)(t_shader *shader, char *name, t_mat4 *mat);
+    void (*set_vec3)(t_shader *shader, char *name, t_vec3 *vec);
 };
 t_shader * mgl_shader_create(char *v_srcfile, char *f_srcfile);
 void mgl_shader_setInt(t_shader *shader, char *name, int value);
 void mgl_shader_setMat4(t_shader *shader, char *name, t_mat4 *mat);
+void mgl_set_vec3(t_shader *shader, char *name, t_vec3 *vec);
 
 #endif

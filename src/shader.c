@@ -6,7 +6,7 @@
 /*   By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/06 17:53:18 by jblack-b          #+#    #+#             */
-/*   Updated: 2020/03/10 21:13:08 by jblack-b         ###   ########.fr       */
+/*   Updated: 2021/01/05 20:21:43 by jblack-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,6 @@
 #include <stdio.h>
 #include "libmath.h"
 
-char *vertexShaderSource = "#version 330 core\n"
-						   "layout (location = 0) in vec3 aPos;\n"
-						   "void main()\n"
-						   "{\n"
-						   "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-						   "}\0";
-char *fragmentShaderSource = "#version 330 core\n"
-							 "out vec4 FragColor;\n"
-							 "void main()\n"
-							 "{\n"
-							 "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-							 "}\n\0";
-
 int shader_use(t_shader *shader)
 {
 	glUseProgram(shader->shader_program);
@@ -39,7 +26,7 @@ int shader_use(t_shader *shader)
 t_shader *mgl_shader_create(char *v_srcfile, char *f_srcfile)
 {
 
-	t_shader * shader = ft_memalloc(sizeof(t_shader));
+	t_shader * shader = ft_memalloc_s(sizeof(t_shader));
 	shader->vertex_shader = glCreateShader(GL_VERTEX_SHADER);
 	shader->vertex_shader_src = readfile(v_srcfile);
 	glShaderSource(shader->vertex_shader, 1, (const char *const *)&shader->vertex_shader_src, NULL);
@@ -81,6 +68,7 @@ t_shader *mgl_shader_create(char *v_srcfile, char *f_srcfile)
 	shader->use = shader_use;
 	shader->set_int = mgl_shader_setInt;
 	shader->set_mat4 = mgl_shader_setMat4;
+	shader->set_vec3 = mgl_set_vec3;
 	return shader;
 }
 void mgl_shader_setInt(t_shader *shader, char *name, int value)
@@ -90,4 +78,8 @@ void mgl_shader_setInt(t_shader *shader, char *name, int value)
 void mgl_shader_setMat4(t_shader *shader, char *name, t_mat4 *mat)
 {
 	glUniformMatrix4fv(glGetUniformLocation(shader->shader_program, name), 1, GL_FALSE, &mat->matrix[0][0]);
+}
+void mgl_set_vec3(t_shader *shader, char *name, t_vec3 *vec)
+{
+	glUniform3fv(glGetUniformLocation(shader->shader_program, name), 1, &vec->x);
 }

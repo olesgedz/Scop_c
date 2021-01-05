@@ -7,11 +7,14 @@ layout (location = 1) in vec3 aNormals;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform vec3 lightPos; 
+
 flat out vec4	fragment_color_f;
 smooth out vec4	fragment_color_s;
 out vec3 normals;
 out vec2 uv;
 out vec4 pos;
+out vec3 light;
 vec2	cylinder_mapping()
 {
 	float	u;
@@ -25,12 +28,13 @@ vec2	cylinder_mapping()
 void main()
 {  
   
-   gl_Position =  projection * view * model * vec4(aPos.x, aPos.y, aPos.z, 1.0f);
-   fragment_color_f = vec4(aPos.y * 0.4f + 0.4f,
+   	gl_Position =  projection * view * model * vec4(aPos.x, aPos.y, aPos.z, 1.0f);
+ 	fragment_color_f = vec4(aPos.y * 0.4f + 0.4f,
 		aPos.z * 0.1 + aPos.y * 0.4f + 0.1f, 0.2f, 1.0f);
-   fragment_color_s = vec4(aPos.y * 0.4f + 0.4f,
+   	fragment_color_s = vec4(aPos.y * 0.4f + 0.4f,
 		aPos.z * 0.1 + aPos.y * 0.4f + 0.1f, 0.2f, 1.0f);
-   normals = aNormals;
-   uv = cylinder_mapping();
-   pos = gl_Position;
+   	normals = mat3(transpose(inverse(view * model))) * aNormals;
+   	uv = cylinder_mapping();
+   	pos = view * model * vec4(aPos.x, aPos.y, aPos.z, 1.0f);
+	light = vec3(view * vec4(lightPos, 1.0));
 }
