@@ -6,12 +6,12 @@
 #    By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/28 20:37:14 by olesgedz          #+#    #+#              #
-#    Updated: 2021/01/05 23:30:44 by jblack-b         ###   ########.fr        #
+#    Updated: 2021/01/06 15:43:21 by jblack-b         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = Scop
-FLAGS = -g # -Wall -Wextra -Werror
+FLAGS = -g  -Wall -Wextra -Werror
 CC = clang
 
 INCLUDES = -I include/ -I./libs/glfw/include/ -I./libs/glad/include/ -I./include/ \
@@ -36,8 +36,12 @@ SRCS_LIST = main.c \
 			shader.c\
 			shader_set.c\
 			parser.c\
+			parser_load.c\
 			camera.c\
 			bmp.c\
+			model.c\
+			texture.c\
+			utils.c
 		
 
 OBJS_DIRECTORY = objects/

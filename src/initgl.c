@@ -6,7 +6,7 @@
 /*   By: jblack-b <jblack-b@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/06 17:43:29 by jblack-b          #+#    #+#             */
-/*   Updated: 2021/01/05 23:19:25 by jblack-b         ###   ########.fr       */
+/*   Updated: 2021/01/06 14:23:04 by jblack-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,6 @@ int		init_gl(int w_h, int w_w, t_gl *gl)
 
 void	framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
+	(void)window;
 	glViewport(0, 0, width, height);
 }
