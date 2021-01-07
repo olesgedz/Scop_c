@@ -1,7 +1,7 @@
-Scop
-<br>
-![https://github.com/olesgedz/Scop_c](https://badge42.herokuapp.com/api/project/jblack-b/scop)
 
+
+![https://github.com/olesgedz/Scop_c](https://badge42.herokuapp.com/api/project/jblack-b/scop)
+<h1>Scop</h1>
 <hr>
 <p><b>Scop is Wavefront.obj file viewer.</b></p>
 <p><b>Here is some rendering examples:</b></p>
