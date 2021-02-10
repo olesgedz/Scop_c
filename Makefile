@@ -105,7 +105,7 @@ $(OBJS_DIRECTORY):
 
 $(OBJS_DIRECTORY)%.o : $(SRCS_DIRECTORY)%.c $(HEADERS)
 	@mkdir -p $(@D)
-	@$(CC) $(FLAGS) -c $(INCLUDES) $< -o $@
+	@$(CC) $(FLAGS) -MMD -c $(INCLUDES) $< -o $@
 	@echo "$(CLEAR_LINE)[`expr $(CURRENT_FILES) '*' 100 / $(TOTAL_FILES) `%] $(COL_BLUE)[$(NAME)] $(COL_GREEN)Compiling file [$(COL_VIOLET)$<$(COL_GREEN)].($(CURRENT_FILES) / $(TOTAL_FILES))$(COL_END)$(BEGIN_LINE)"
 
 $(GLFW):
@@ -131,3 +131,5 @@ fclean: clean
 re:
 	@$(MAKE) fclean
 	@$(MAKE) all
+
+-include $(OBJS:.o=.d)
